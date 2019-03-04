@@ -191,7 +191,34 @@ def setup_game() -> ".game.Game":
     return game
 
 
-def play_turn(game: ".game.Game") -> ".game.Game":
+def play_turn(game: ".game.Game", strategy: int) -> ".game.Game":
+    player = game.current_player
+
+    if strategy == 0:
+        random_agent(game)
+
+    game.end_turn()
+    return game
+
+
+def play_full_game() -> ".game.Game":
+    game = setup_game()
+
+    for player in game.players:
+        print("Can mulligan %r" % (player.choice.cards))
+        mull_count = random.randint(0, len(player.choice.cards))  # liczba kart do wymiany na początku
+        cards_to_mulligan = random.sample(player.choice.cards, mull_count)
+        player.choice.choose(*cards_to_mulligan)
+
+    strategy = 0
+    while True:
+        play_turn(game, strategy)
+
+    return game
+
+
+def random_agent(game: ".game.Game") -> ".game.Game":
+    # it's actually a random agent right now, but it'll be greedy
     player = game.current_player
 
     while True:
@@ -215,7 +242,7 @@ def play_turn(game: ".game.Game") -> ".game.Game":
                 print("Playing %r on %r" % (card, target))
                 card.play(target=target)
 
-                if player.choice:  # chyba wybiera jakąś kartę?
+                if player.choice:  # chyba wybiera jakąś kartę???
                     choice = random.choice(player.choice.cards)
                     print("Choosing card %r" % (choice))
                     player.choice.choose(choice)
@@ -228,21 +255,3 @@ def play_turn(game: ".game.Game") -> ".game.Game":
                 character.attack(random.choice(character.targets))
 
         break
-
-    game.end_turn()
-    return game
-
-
-def play_full_game() -> ".game.Game":
-    game = setup_game()
-
-    for player in game.players:
-        print("Can mulligan %r" % (player.choice.cards))
-        mull_count = random.randint(0, len(player.choice.cards))  # liczba kart do wymiany na początku
-        cards_to_mulligan = random.sample(player.choice.cards, mull_count)
-        player.choice.choose(*cards_to_mulligan)
-
-    while True:
-        play_turn(game)
-
-    return game

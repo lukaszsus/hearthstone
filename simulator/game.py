@@ -1,5 +1,7 @@
 import os.path
 import random
+import simulator.printer as printer
+
 from bisect import bisect
 from importlib import import_module
 from pkgutil import iter_modules
@@ -7,7 +9,6 @@ from typing import List
 from xml.etree import ElementTree
 
 from hearthstone.enums import CardClass, CardType
-
 # Autogenerate the list of cardset modules
 from simulator.strategies import random_agent
 
@@ -69,29 +70,26 @@ class CardList(list):
 
 def random_draft(card_class: CardClass, exclude=[]):
     """
-    Return a deck of 30 random cards for the \a card_class
+    Return a deck of 20 random cards for the \a card_class
     """
     from fireplace import cards
-    from fireplace.deck import Deck
+    from .deck import Deck
 
     deck = []
     collection = []
     # hero = card_class.default_hero
 
-    for card in cards.db.keys():
+    minions = cards.filter(
+            collectible=True,
+            type=CardType.MINION,
+            card_class=CardClass.NEUTRAL,
+    )
+
+    for card in minions:
         if card in exclude:
             continue
         cls = cards.db[card]
-        if cls.type != CardType.MINION:  # use only MINION cards
-            continue
-        if not cls.collectible:
-            continue
-        if cls.type == CardType.HERO:
-            # Heroes are collectible...
-            continue
-        if cls.card_class and cls.card_class not in [card_class,
-                                                     CardClass.NEUTRAL]:
-            # Play with more possibilities
+        if cls.cost > 10:
             continue
         collection.append(cls)
 
@@ -102,6 +100,40 @@ def random_draft(card_class: CardClass, exclude=[]):
 
     return deck
 
+
+def shuffled_const_draft(card_indices):
+    """
+    Return a constant deck of 20 chosen cards for the \a card_class
+    """
+    from fireplace import cards
+    from .deck import Deck
+
+    deck = []
+    collection = []
+
+    minions = cards.filter(
+            collectible=True,
+            type=CardType.MINION,
+            card_class=CardClass.NEUTRAL,
+    )
+
+    for card in minions:
+        cls = cards.db[card]
+        if cls.cost > 10:
+            continue
+        collection.append(cls)
+
+    collection[:] = [collection[i] for i in card_indices]
+
+    if len(collection) > Deck.MAX_CARDS/2:
+        raise Exception("Too many cards chosen for deck.")
+
+    for card in collection:
+        deck.append(card.id)
+        deck.append(card.id)    # every card doubled in deck
+
+    random.shuffle(deck)
+    return deck
 
 def random_class():
     return CardClass(random.randint(2, 10))
@@ -182,8 +214,15 @@ def setup_game() -> ".game.Game":
     from fireplace.game import Game
     from fireplace.player import Player
 
-    deck1 = random_draft(CardClass.MAGE)  # choose cards for Player1
-    deck2 = random_draft(CardClass.WARRIOR)  # choose cards for Player2
+    # card_indices = [27, 48, 68, 159, 169, 180, 307, 386, 546, 588]  # randomly chosen 10 integers from [1,698]
+    card_indices = [random.randrange(1,698) for i in range(10)]
+
+    deck1 = shuffled_const_draft(card_indices)  # choose cards for Player1
+    deck2 = shuffled_const_draft(card_indices)  # choose cards for Player2
+
+    printer.print_deck_content("Player1", deck1)
+    printer.print_deck_content("Player2", deck2)
+
     player1 = Player("Player1", deck1, CardClass.MAGE.default_hero)
     player2 = Player("Player2", deck2, CardClass.WARRIOR.default_hero)
 
@@ -195,7 +234,7 @@ def setup_game() -> ".game.Game":
 
 def play_turn(game: ".game.Game", strategy: int) -> ".game.Game":
     for player in game.players:
-        print_player_cards(player)
+        printer.print_player_cards(player)
 
     player = game.current_player
     if strategy == 0:
@@ -208,12 +247,6 @@ def play_turn(game: ".game.Game", strategy: int) -> ".game.Game":
 def play_full_game() -> ".game.Game":
     game = setup_game()
 
-    # for player in game.players:
-    #     print("Can mulligan %r" % (player.choice.cards))
-    #     mull_count = random.randint(0, len(player.choice.cards))  # liczba kart do wymiany na początku
-    #     cards_to_mulligan = random.sample(player.choice.cards, mull_count)
-    #     player.choice.choose(*cards_to_mulligan)
-
     for player in game.players:
         player.choice.choose()
 
@@ -222,23 +255,3 @@ def play_full_game() -> ".game.Game":
         play_turn(game, strategy)
 
     return game
-
-
-def print_player_cards(player):
-    cards = player.name + " cards in field: "
-    for character in player.characters:
-        try:
-            cards = cards + character.id + "({},{},{}); ".format(character.atk,
-                                                             character.max_health,
-                                                             character.cost)
-        except:
-            cards = cards + character.id
-    cards = cards + " cards in hand: "
-    for character in player.hand:
-        try:
-            cards = cards + character.id + "({},{},{}); ".format(character.atk,
-                                                             character.max_health,
-                                                             character.cost)
-        except:
-            cards = cards + character.id
-    print(cards)

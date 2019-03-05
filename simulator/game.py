@@ -194,8 +194,10 @@ def setup_game() -> ".game.Game":
 
 
 def play_turn(game: ".game.Game", strategy: int) -> ".game.Game":
-    player = game.current_player
+    for player in game.players:
+        print_player_cards(player)
 
+    player = game.current_player
     if strategy == 0:
         random_agent(game)
 
@@ -206,14 +208,37 @@ def play_turn(game: ".game.Game", strategy: int) -> ".game.Game":
 def play_full_game() -> ".game.Game":
     game = setup_game()
 
+    # for player in game.players:
+    #     print("Can mulligan %r" % (player.choice.cards))
+    #     mull_count = random.randint(0, len(player.choice.cards))  # liczba kart do wymiany na początku
+    #     cards_to_mulligan = random.sample(player.choice.cards, mull_count)
+    #     player.choice.choose(*cards_to_mulligan)
+
     for player in game.players:
-        print("Can mulligan %r" % (player.choice.cards))
-        mull_count = random.randint(0, len(player.choice.cards))  # liczba kart do wymiany na początku
-        cards_to_mulligan = random.sample(player.choice.cards, mull_count)
-        player.choice.choose(*cards_to_mulligan)
+        player.choice.choose()
 
     strategy = 0
     while True:
         play_turn(game, strategy)
 
     return game
+
+
+def print_player_cards(player):
+    cards = player.name + " cards in field: "
+    for character in player.characters:
+        try:
+            cards = cards + character.id + "({},{},{}); ".format(character.atk,
+                                                             character.max_health,
+                                                             character.cost)
+        except:
+            cards = cards + character.id
+    cards = cards + " cards in hand: "
+    for character in player.hand:
+        try:
+            cards = cards + character.id + "({},{},{}); ".format(character.atk,
+                                                             character.max_health,
+                                                             character.cost)
+        except:
+            cards = cards + character.id
+    print(cards)

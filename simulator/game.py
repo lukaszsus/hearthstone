@@ -224,7 +224,7 @@ def setup_game() -> ".game.Game":
     printer.print_deck_content("Player2", deck2)
 
     player1 = Player("Player1", deck1, CardClass.MAGE.default_hero)
-    player2 = Player("Player2", deck2, CardClass.WARRIOR.default_hero)
+    player2 = Player("Player2", deck2, CardClass.MAGE.default_hero)
 
     game = Game(players=(player1, player2))
     game.start()
@@ -237,6 +237,11 @@ def play_turn(game: ".game.Game", strategy: int) -> ".game.Game":
         printer.print_player_cards(player)
 
     player = game.current_player
+
+    for character in player.hand:
+        if character.type == CardType.SPELL:
+            player.hand.remove(character)
+
     if strategy == 0:
         random_agent(game)
 

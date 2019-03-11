@@ -229,6 +229,9 @@ def setup_game() -> ".game.Game":
     game = Game(players=(player1, player2))
     game.start()
 
+    player1.hero.set_current_health(20)
+    player2.hero.set_current_health(20)
+
     return game
 
 

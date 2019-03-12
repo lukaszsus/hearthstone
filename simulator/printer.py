@@ -10,7 +10,7 @@ def print_player_cards(player: Player):
     for character in player.field:
         try:
             cards = cards + str(character) + "({},{},{}); ".format(character.atk,
-                                                             character.max_health,
+                                                             character.health,
                                                              character.cost)
         except:  # for Spell cards which don't have atk attribute
             cards = cards + str(character)
@@ -18,7 +18,7 @@ def print_player_cards(player: Player):
     for character in player.hand:
         try:
             cards = cards + str(character) + "({},{},{}); ".format(character.atk,
-                                                             character.max_health,
+                                                             character.health,
                                                              character.cost)
         except:  # for Spell cards which don't have atk attribute
             cards = cards + str(character)
@@ -28,3 +28,15 @@ def print_player_cards(player: Player):
 def print_deck_content(player_name: str, deck: Deck):
     deck_info = player_name + "'s deck contains:\n {0}".format(deck)
     log.info("#" + deck_info)
+
+def print_attack(character, target):
+    log.info("# {}({},{},{}) attacks {}({},{},{})".format(str(character),
+                                                          character.atk,
+                                                          character.health,
+                                                          character.cost,
+                                                          str(target),
+                                                          target.atk,
+                                                          target.health,
+                                                          target.cost,
+                                                          ))
+

@@ -1,5 +1,8 @@
 import os.path
 import random
+
+from fireplace.exceptions import GameOver
+
 import simulator.printer as printer
 
 from bisect import bisect
@@ -10,7 +13,8 @@ from xml.etree import ElementTree
 
 from hearthstone.enums import CardClass, CardType
 # Autogenerate the list of cardset modules
-from simulator.strategies import random_agent
+from simulator.strategies import random_agent, Strategies, controlling_agent, \
+    aggresive_agent
 
 _cards_module = os.path.join(os.path.dirname(__file__), "cards")
 CARD_SETS = [cs for _, cs, ispkg in iter_modules([_cards_module]) if ispkg]
@@ -245,8 +249,12 @@ def play_turn(game: ".game.Game", strategy: int) -> ".game.Game":
         if character.type == CardType.SPELL:
             player.hand.remove(character)
 
-    if strategy == 0:
+    if strategy == Strategies.RANDOM:
         random_agent(game)
+    if strategy == Strategies.AGGRESIVE:
+        aggresive_agent(game)
+    if strategy == Strategies.CONTROLLING:
+        controlling_agent(game)
 
     game.end_turn()
     return game
@@ -258,8 +266,20 @@ def play_full_game() -> ".game.Game":
     for player in game.players:
         player.choice.choose()
 
-    strategy = 0
-    while True:
-        play_turn(game, strategy)
+    strategy_player1 = Strategies.RANDOM
+    strategy_player2 = Strategies.AGGRESIVE
+    try:
+        while True:
+            player = game.current_player
+            if player.name == 'Player1':
+                play_turn(game, strategy_player1)
+            if player.name == 'Player2':
+                play_turn(game, strategy_player2)
+
+    except GameOver:
+        if game.player1.hero.health > game.player2.hero.health:
+            print("{} WINS! {} : {}".format(game.player1.name, game.player1.hero.health, game.player2.hero.health))
+        else:
+            print("{} WINS! {} : {}".format(game.player2.name, game.player2.hero.health, game.player1.hero.health))
 
     return game

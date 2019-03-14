@@ -266,8 +266,8 @@ def play_full_game() -> ".game.Game":
     for player in game.players:
         player.choice.choose()
 
-    strategy_player1 = Strategies.RANDOM
-    strategy_player2 = Strategies.AGGRESIVE
+    strategy_player1 = Strategies.AGGRESIVE
+    strategy_player2 = Strategies.CONTROLLING
     try:
         while True:
             player = game.current_player

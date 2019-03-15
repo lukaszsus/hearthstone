@@ -9,7 +9,7 @@ from enum import IntEnum
 
 class Strategies(IntEnum):
     RANDOM = 0
-    AGGRESIVE = 1
+    AGGRESSIVE = 1
     CONTROLLING = 2
     MCTS = 3
 
@@ -55,7 +55,7 @@ def random_agent(game: ".game.Game") -> ".game.Game":
         break
 
 
-def aggresive_agent(game: ".game.Game") -> ".game.Game":
+def aggressive_agent(game: ".game.Game") -> ".game.Game":
     player = game.current_player
 
     while True:
@@ -121,4 +121,11 @@ def controlling_agent(game: ".game.Game") -> ".game.Game":
                         break
                 if target is not None:
                     character.attack(target)
+                else:       # if there is no minions on field
+                    for potential_target in character.targets:
+                        if potential_target.type == CardType.HERO:
+                            target = potential_target
+                            break
+                    if target is not None:
+                        character.attack(target)
         break

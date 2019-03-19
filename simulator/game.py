@@ -14,7 +14,7 @@ from xml.etree import ElementTree
 from hearthstone.enums import CardClass, CardType
 # Autogenerate the list of cardset modules
 from simulator.strategies import random_agent, Strategies, controlling_agent, \
-    aggressive_agent
+    aggressive_agent, mcts_agent
 
 _cards_module = os.path.join(os.path.dirname(__file__), "cards")
 CARD_SETS = [cs for _, cs, ispkg in iter_modules([_cards_module]) if ispkg]

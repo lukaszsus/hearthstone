@@ -34,7 +34,7 @@ def attack_opponent(game: ".game.Game", strategy) -> ".game.Game":
     if strategy == AttackOpponent.AGGRESSIVE:
         attack_opponent_aggresive(game)
     if strategy == AttackOpponent.CONTROLLING:
-        pass
+        attack_opponent_controlling(game)
 
 
 def choose_card_from_hand_sorting(game: ".game.Game") -> ".game.Game":
@@ -54,10 +54,10 @@ def choose_card_from_hand_sorting(game: ".game.Game") -> ".game.Game":
             print("Playing %r on %r" % (card, target))
             card.play(target=target)
 
-            # if player.choice:  # chyba wybiera jakąś kartę???
-            #     choice = random.choice(player.choice.cards)
-            #     print("Choosing card %r" % (choice))
-            #     player.choice.choose(choice)
+            if player.choice:  # chyba wybiera jakąś kartę???
+                choice = random.choice(player.choice.cards)
+                print("Choosing card %r" % (choice))
+                player.choice.choose(choice)
 
 
 def choose_card_from_hand_optimal_cost(game: ".game.Game") -> ".game.Game":
@@ -94,10 +94,10 @@ def choose_card_from_hand_optimal_cost(game: ".game.Game") -> ".game.Game":
             print("Playing %r on %r" % (card, target))
             card.play(target=target)
 
-            # if player.choice:  # chyba wybiera jakąś kartę???
-            #     choice = random.choice(player.choice.cards)
-            #     print("Choosing card %r" % (choice))
-            #     player.choice.choose(choice)
+            if player.choice:  # chyba wybiera jakąś kartę???
+                choice = random.choice(player.choice.cards)
+                print("Choosing card %r" % (choice))
+                player.choice.choose(choice)
 
 
 def choose_card_from_hand_random(game: ".game.Game") -> ".game.Game":
@@ -118,8 +118,6 @@ def choose_card_from_hand_random(game: ".game.Game") -> ".game.Game":
                 choice = random.choice(player.choice.cards)
                 print("Choosing card %r" % (choice))
                 player.choice.choose(choice)
-
-            continue
 
 
 def attack_opponent_random(game: ".game.Game") -> ".game.Game":
@@ -153,15 +151,27 @@ def attack_opponent_controlling(game: ".game.Game") -> ".game.Game":
 
     # Every cards attacks another card if possible
     for character in player.characters:
+        # prefer cards which have more atk and less health
+        character.targets.sort(key=lambda x: (x.atk, -x.health), reverse=True)
+
         if character.can_attack():
             target = None
             for potential_target in character.targets:
                 if potential_target.type == CardType.MINION:
-                    target = potential_target
+
+                    if is_dead_after_attack(character, potential_target) and \
+                            not is_dead_after_attack(potential_target, character):
+                                # our character dies but the other doesn't
+                                # so this attack doesn't make sense
+                                pass
+                    else:
+                        target = potential_target
                     break
+
             if target is not None:
                 character.attack(target)
                 print_attack(character, target)
+
             else:  # if there are no minions on field
                 for potential_target in character.targets:
                     if potential_target.type == CardType.HERO:
@@ -170,3 +180,7 @@ def attack_opponent_controlling(game: ".game.Game") -> ".game.Game":
                 if target is not None:
                     character.attack(target)
                     print_attack(character, target)
+
+
+def is_dead_after_attack(my_character, opponent_character):
+    return my_character.health - opponent_character.atk <= 0

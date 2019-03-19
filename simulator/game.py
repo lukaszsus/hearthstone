@@ -255,6 +255,8 @@ def play_turn(game: ".game.Game", strategy: int) -> ".game.Game":
         aggressive_agent(game)
     elif strategy == Strategies.CONTROLLING:
         controlling_agent(game)
+    elif strategy == Strategies.MCTS:
+        mcts_agent(game)
 
     game.end_turn()
     return game

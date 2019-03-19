@@ -4,6 +4,8 @@ from itertools import chain, combinations
 
 from hearthstone.enums import CardType
 
+from simulator.printer import print_attack
+
 
 class ChooseCard(IntEnum):
     RANDOM = 0
@@ -13,7 +15,7 @@ class ChooseCard(IntEnum):
 
 class AttackOpponent(IntEnum):
     RANDOM = 0
-    AGGRESIVE = 1
+    AGGRESSIVE = 1
     CONTROLLING = 2
 
 
@@ -28,8 +30,8 @@ def choose_card_from_hand(game: ".game.Game", strategy) -> ".game.Game":
 
 def attack_opponent(game: ".game.Game", strategy) -> ".game.Game":
     if strategy == AttackOpponent.RANDOM:
-        pass
-    if strategy == AttackOpponent.AGGRESIVE:
+        attack_opponent_random(game)
+    if strategy == AttackOpponent.AGGRESSIVE:
         attack_opponent_aggresive(game)
     if strategy == AttackOpponent.CONTROLLING:
         pass
@@ -52,12 +54,10 @@ def choose_card_from_hand_sorting(game: ".game.Game") -> ".game.Game":
             print("Playing %r on %r" % (card, target))
             card.play(target=target)
 
-            if player.choice:  # chyba wybiera jakąś kartę???
-                choice = random.choice(player.choice.cards)
-                print("Choosing card %r" % (choice))
-                player.choice.choose(choice)
-
-            continue
+            # if player.choice:  # chyba wybiera jakąś kartę???
+            #     choice = random.choice(player.choice.cards)
+            #     print("Choosing card %r" % (choice))
+            #     player.choice.choose(choice)
 
 
 def choose_card_from_hand_optimal_cost(game: ".game.Game") -> ".game.Game":
@@ -94,12 +94,11 @@ def choose_card_from_hand_optimal_cost(game: ".game.Game") -> ".game.Game":
             print("Playing %r on %r" % (card, target))
             card.play(target=target)
 
-            if player.choice:  # chyba wybiera jakąś kartę???
-                choice = random.choice(player.choice.cards)
-                print("Choosing card %r" % (choice))
-                player.choice.choose(choice)
+            # if player.choice:  # chyba wybiera jakąś kartę???
+            #     choice = random.choice(player.choice.cards)
+            #     print("Choosing card %r" % (choice))
+            #     player.choice.choose(choice)
 
-            continue
 
 def choose_card_from_hand_random(game: ".game.Game") -> ".game.Game":
     player = game.current_player
@@ -123,6 +122,16 @@ def choose_card_from_hand_random(game: ".game.Game") -> ".game.Game":
             continue
 
 
+def attack_opponent_random(game: ".game.Game") -> ".game.Game":
+    player = game.current_player
+
+    for character in player.characters:
+        if character.can_attack():
+            target = random.choice(character.targets)
+            character.attack(target)
+            print_attack(character, target)
+
+
 def attack_opponent_aggresive(game: ".game.Game") -> ".game.Game":
     player = game.current_player
 
@@ -136,3 +145,28 @@ def attack_opponent_aggresive(game: ".game.Game") -> ".game.Game":
                     break
             if target is not None:
                 character.attack(target)
+                print_attack(character, target)
+
+
+def attack_opponent_controlling(game: ".game.Game") -> ".game.Game":
+    player = game.current_player
+
+    # Every cards attacks another card if possible
+    for character in player.characters:
+        if character.can_attack():
+            target = None
+            for potential_target in character.targets:
+                if potential_target.type == CardType.MINION:
+                    target = potential_target
+                    break
+            if target is not None:
+                character.attack(target)
+                print_attack(character, target)
+            else:  # if there are no minions on field
+                for potential_target in character.targets:
+                    if potential_target.type == CardType.HERO:
+                        target = potential_target
+                        break
+                if target is not None:
+                    character.attack(target)
+                    print_attack(character, target)

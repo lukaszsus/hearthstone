@@ -3,7 +3,9 @@ import random
 from fireplace import game
 from hearthstone.enums import CardType
 
-from simulator.printer import print_attack
+from simulator.strategies_utils import choose_card_from_hand, attack_opponent, \
+    choose_card_from_hand_sorting, ChooseCard, AttackOpponent
+from simulator.printer import print_attack, print_player_cards
 from enum import IntEnum
 
 
@@ -56,39 +58,9 @@ def random_agent(game: ".game.Game") -> ".game.Game":
 
 
 def aggresive_agent(game: ".game.Game") -> ".game.Game":
-    player = game.current_player
+    choose_card_from_hand(game, ChooseCard.OPTIMAL_COST)
+    attack_opponent(game, AttackOpponent.AGGRESIVE)
 
-    while True:
-        # iterate over our hand and play whatever is playable - TODO: random or more smart?
-        for card in player.hand:
-            if card.is_playable() and random.random() < 0.5:  # choose random cards from hand
-                target = None
-                if card.must_choose_one:  # there are some choosable special skills
-                    card = random.choice(card.choose_cards)
-                if card.requires_target():  #
-                    target = random.choice(card.targets)
-                print("Playing %r on %r" % (card, target))
-                card.play(target=target)
-
-                if player.choice:  # chyba wybiera jakąś kartę???
-                    choice = random.choice(player.choice.cards)
-                    print("Choosing card %r" % (choice))
-                    player.choice.choose(choice)
-
-                continue
-
-        # Every cards attacks HERO if possible
-        for character in player.characters:
-            if character.can_attack():
-                target = None
-                for potential_target in character.targets:
-                    if potential_target.type == CardType.HERO:
-                        target = potential_target
-                        break
-                if target is not None:
-                    character.attack(target)
-
-        break
 
 
 def controlling_agent(game: ".game.Game") -> ".game.Game":

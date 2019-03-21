@@ -22,18 +22,18 @@ class AttackOpponent(IntEnum):
 def choose_card_from_hand(game: ".game.Game", strategy) -> ".game.Game":
     if strategy == ChooseCard.RANDOM:
         choose_card_from_hand_random(game)
-    if strategy == ChooseCard.SORTED:
+    elif strategy == ChooseCard.SORTED:
         choose_card_from_hand_sorting(game)
-    if strategy == ChooseCard.OPTIMAL_COST:
+    elif strategy == ChooseCard.OPTIMAL_COST:
         choose_card_from_hand_optimal_cost(game)
 
 
 def attack_opponent(game: ".game.Game", strategy) -> ".game.Game":
     if strategy == AttackOpponent.RANDOM:
         attack_opponent_random(game)
-    if strategy == AttackOpponent.AGGRESSIVE:
+    elif strategy == AttackOpponent.AGGRESSIVE:
         attack_opponent_aggresive(game)
-    if strategy == AttackOpponent.CONTROLLING:
+    elif strategy == AttackOpponent.CONTROLLING:
         attack_opponent_controlling(game)
 
 
@@ -75,7 +75,7 @@ def choose_card_from_hand_optimal_cost(game: ".game.Game") -> ".game.Game":
         if max_cost < sum_cost <= player.mana:
             max_cost = sum_cost
             chosen_cards = card_set
-
+        # jeżeli damy tutaj elif to funkcja zadziała niepoprawnie
         if max_cost == sum_cost and sum_atk > max_atk:
             max_atk = sum_atk
             chosen_cards = card_set
@@ -166,13 +166,13 @@ def attack_opponent_controlling(game: ".game.Game") -> ".game.Game":
                                 pass
                     else:
                         target = potential_target
-                    break
+                        break
 
             if target is not None:
                 character.attack(target)
                 print_attack(character, target)
 
-            else:  # if there are no minions on field
+            else:  # if there are no minions on field or all are too strong
                 for potential_target in character.targets:
                     if potential_target.type == CardType.HERO:
                         target = potential_target

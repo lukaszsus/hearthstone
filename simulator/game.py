@@ -139,6 +139,7 @@ def shuffled_const_draft(card_indices):
     random.shuffle(deck)
     return deck
 
+
 def random_class():
     return CardClass(random.randint(2, 10))
 
@@ -216,7 +217,7 @@ def weighted_card_choice(source, weights: List[int], card_sets: List[str],
 
 def setup_game() -> ".game.Game":
     from fireplace.game import Game
-    from fireplace.player import Player
+    from simulator.player import Player
 
     # card_indices = [27, 48, 68, 159, 169, 180, 307, 386, 546, 588]  # randomly chosen 10 integers from [1,698]
     card_indices = [random.randrange(1,698) for i in range(10)]
@@ -268,17 +269,17 @@ def play_full_game() -> ".game.Game":
     for player in game.players:
         player.choice.choose()
 
-    strategy_player1 = Strategies.AGGRESSIVE
-    strategy_player2 = Strategies.CONTROLLING
+    game.player1.strategy = Strategies.AGGRESSIVE
+    game.player2.strategy = Strategies.CONTROLLING
     try:
         printer.print_main_phase_start()
         while True:
             player = game.current_player
             if player.name == 'Player1':
-                play_turn(game, strategy_player1)
+                play_turn(game, game.player1.strategy)
 
             if player.name == 'Player2':
-                play_turn(game, strategy_player2)
+                play_turn(game, game.player2.strategy)
 
             printer.print_empty_line()
 
@@ -289,3 +290,34 @@ def play_full_game() -> ".game.Game":
             print("{} WINS! {} : {}".format(game.player2.name, game.player2.hero.health, game.player1.hero.health))
 
     return game
+
+
+def play_random_playout_from_state(game: ".game.Game") -> (".game.Game", ".player.Player"):
+    winner = None
+    player1_strategy = game.player1.strategy
+    player2_strategy = game.player2.strategy
+    if player1_strategy == Strategies.MCTS:
+        player1_strategy = Strategies.RANDOM
+    elif player2_strategy == Strategies.MCTS:
+        player2_strategy = Strategies.RANDOM
+
+    try:
+        while True:
+            player = game.current_player
+            if player.name == 'Player1':
+                play_turn(game, player1_strategy)
+
+            if player.name == 'Player2':
+                play_turn(game, player2_strategy)
+
+            printer.print_empty_line()
+
+    except GameOver:
+        if game.player1.hero.health > game.player2.hero.health:
+            winner = game.player1.name
+            print("{} WINS! {} : {}".format(game.player1.name, game.player1.hero.health, game.player2.hero.health))
+        else:
+            winner = game.player2.name
+            print("{} WINS! {} : {}".format(game.player2.name, game.player2.hero.health, game.player1.hero.health))
+
+    return game, winner

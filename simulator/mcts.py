@@ -1,3 +1,6 @@
+import copy
+
+from tree.node import Node
 
 
 class MCTS:
@@ -6,7 +9,9 @@ class MCTS:
         # ważne: musimy mieć jeden obiekt tej klasy dla jednego gracza - nie może powstawać nowy obiekt w funkcji mcts_agent
         pass
 
-    def choose_next_move(self, game):
+    def choose_next_move(self, game: ".game.Game"):
+        self._game = copy.deepcopy(game)
+        self._root = Node("root", game=self._game)
         # zwraca kolejny ruch: jakie karty wybrać z ręki i co zaatakować
         # sugeruję to zrobić w taki sposób, że zwraca listę kart do wybrania z ręki
         # i listę dwuwymiarową z wszystkimi atakami naszych kart na karty przeciwnika (lub może słownik?)

@@ -62,7 +62,7 @@ class Player(Entity, TargetableByAuras):
 		self.weapon = None
 		self.zone = Zone.INVALID
 
-		self.__strategy = Strategies.RANDOM
+		self.strategy = Strategies.RANDOM
 
 	def __str__(self):
 		return self.name
@@ -141,10 +141,6 @@ class Player(Entity, TargetableByAuras):
 	@property
 	def minion_slots(self):
 		return max(0, self.game.MAX_MINIONS_ON_FIELD - len(self.field))
-
-	@property
-	def strategy(self):
-		return self.__strategy
 
 	def card(self, id, source=None, parent=None, zone=Zone.SETASIDE):
 		card = Card(id)

@@ -294,12 +294,8 @@ def play_full_game() -> ".game.Game":
 
 def play_random_playout_from_state(game: ".game.Game") -> (".game.Game", ".player.Player"):
     winner = None
-    player1_strategy = game.player1.strategy
-    player2_strategy = game.player2.strategy
-    if player1_strategy == Strategies.MCTS:
-        player1_strategy = Strategies.RANDOM
-    elif player2_strategy == Strategies.MCTS:
-        player2_strategy = Strategies.RANDOM
+    player1_strategy = Strategies.RANDOM
+    player2_strategy = Strategies.RANDOM
 
     try:
         while True:

@@ -3,6 +3,7 @@ import random
 from fireplace import game
 from hearthstone.enums import CardType
 
+from simulator.mcts import MCTS
 from simulator.strategies_greedy import choose_card_from_hand, attack_opponent, \
     ChooseCard, AttackOpponent
 from simulator.printer import print_attack, print_player_cards
@@ -32,7 +33,6 @@ def controlling_agent(game: ".game.Game") -> ".game.Game":
 
 
 def mcts_agent(game: ".game.Game") -> ".game.Game":
-
-    # TODO: implement
-    # mcts.choose_next_move()
+    mcts = MCTS(game)
+    moves = mcts.choose_next_move()
     pass

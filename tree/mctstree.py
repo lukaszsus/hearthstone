@@ -2,12 +2,12 @@
 # You Programming (http://www.youprogramming.com)
 # May 03, 2014
 
-from tree.node import Node
+from tree.mctsnode import MCTSNode
 
 (_ROOT, _DEPTH, _BREADTH) = range(3)
 
 
-class Tree:
+class MCTSTree:
 
     def __init__(self):
         self.__nodes = {}
@@ -16,8 +16,8 @@ class Tree:
     def nodes(self):
         return self.__nodes
 
-    def add_node(self, identifier, parent=None):
-        node = Node(identifier)
+    def add_node(self, identifier, game, parent=None):
+        node = MCTSNode(identifier, game=game)
         self[identifier] = node
 
         if parent is not None:
@@ -55,3 +55,7 @@ class Tree:
 
     def __setitem__(self, key, item):
         self.__nodes[key] = item
+
+    def selection(self):
+        # TODO
+        pass

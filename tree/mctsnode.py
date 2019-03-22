@@ -9,13 +9,14 @@ import copy
 from simulator.game import play_random_playout_from_state
 
 
-class Node:
+class MCTSNode:
     def __init__(self, identifier, game):
         self.__identifier = identifier
         self.__num_wins = 0
         self.__num_playouts = 0
         self.__game = copy.deepcopy(game)
         self.__children = []
+        self.__parent = None
 
     @property
     def identifier(self):
@@ -37,12 +38,27 @@ class Node:
     def game(self):
         return self.__game
 
+    @property
+    def parent(self):
+        return self.__parent
+
     def add_child(self, identifier):
+        # TODO: przemyśleć, co z identifiers
+        identifier.__parent = self
         self.__children.append(identifier)
 
     def random_playout(self):
+        # TODO: sprawdzić
         game = copy.deepcopy(self.game)
         game, winner = play_random_playout_from_state(game)
         self.__num_playouts += 1
         if winner.name == "player1":    # zakladamy, ze player1 to "nasz" gracz MCTS
             self.__num_wins += 1
+
+    def backpropagate(self):
+        # TODO przekazać wynik playoutu do wyższych nodeów
+        pass
+
+    def expansion(self):
+        # TODO stworzenie dzieci
+        pass

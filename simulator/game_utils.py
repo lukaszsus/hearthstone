@@ -9,7 +9,7 @@ import os
 from hearthstone.enums import CardType, CardClass
 
 from simulator import printer
-from simulator.strategies import choose_agent
+from simulator.strategies import choose_agent, Strategies
 
 _cards_module = os.path.join(os.path.dirname(__file__), "cards")
 CARD_SETS = [cs for _, cs, ispkg in iter_modules([_cards_module]) if ispkg]
@@ -234,11 +234,16 @@ def setup_game() -> ".game.Game":
     return game
 
 
-def play_turn(game: ".game.Game", strategy: int) -> ".game.Game":
+def play_turn(game: ".game.Game", strategy: int=None) -> ".game.Game":
     for player in game.players:
         printer.print_player_cards(player)
 
     player = game.current_player
+    if strategy is None:
+        if player.strategy is not None:
+            strategy = player.strategy
+        else:
+            strategy = Strategies.RANDOM
 
     for character in player.hand:
         if character.type == CardType.SPELL:

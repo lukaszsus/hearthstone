@@ -11,30 +11,36 @@ class ChooseCard(IntEnum):
     RANDOM = 0
     SORTED = 1
     OPTIMAL_COST = 2
+    DEFINED_CARDS = 3
 
 
 class AttackOpponent(IntEnum):
     RANDOM = 0
     AGGRESSIVE = 1
     CONTROLLING = 2
+    DEFINED_CARDS = 3
 
 
-def choose_card_from_hand(game: ".game.Game", strategy) -> ".game.Game":
+def choose_card_from_hand(game: ".game.Game", strategy, cards=None) -> ".game.Game":
     if strategy == ChooseCard.RANDOM:
         choose_card_from_hand_random(game)
     elif strategy == ChooseCard.SORTED:
         choose_card_from_hand_sorting(game)
     elif strategy == ChooseCard.OPTIMAL_COST:
         choose_card_from_hand_optimal_cost(game)
+    elif strategy == ChooseCard.DEFINED_CARDS and cards is not None:
+        choose_card_from_hand_defined(game, cards)
 
 
-def attack_opponent(game: ".game.Game", strategy) -> ".game.Game":
+def attack_opponent(game: ".game.Game", strategy, cards=None) -> ".game.Game":
     if strategy == AttackOpponent.RANDOM:
         attack_opponent_random(game)
     elif strategy == AttackOpponent.AGGRESSIVE:
         attack_opponent_aggresive(game)
     elif strategy == AttackOpponent.CONTROLLING:
         attack_opponent_controlling(game)
+    elif strategy == AttackOpponent.DEFINED_CARDS and cards is not None:
+        attack_opponent_defined(game, cards)
 
 
 def choose_card_from_hand_sorting(game: ".game.Game") -> ".game.Game":
@@ -118,6 +124,37 @@ def choose_card_from_hand_random(game: ".game.Game") -> ".game.Game":
                 choice = random.choice(player.choice.cards)
                 print_choosing_card(choice)
                 player.choice.choose(choice)
+
+
+def choose_card_from_hand_defined(game: ".game.Game", cards) -> ".game.Game":
+    player = game.current_player
+
+    # iterate over our hand and play chosen cards
+    for card in player.hand:
+        if card.id in cards:
+            if card.is_playable():  # check if cards is playable
+                target = None
+                if card.must_choose_one:  # there are some choosable special skills
+                    card = random.choice(card.choose_cards)
+                if card.requires_target():  #
+                    target = random.choice(card.targets)
+                print_playing_card_on_target(card, target)
+                card.play(target=target)
+
+                if player.choice:  # chyba wybiera jakąś kartę???
+                    choice = random.choice(player.choice.cards)
+                    print_choosing_card(choice)
+                    player.choice.choose(choice)
+
+
+def attack_opponent_defined(game: ".game.Game", cards) -> ".game.Game":
+    player = game.current_player
+
+    for character in player.characters:
+        if character.can_attack() and character.id in cards.keys():
+            target = [t for t in character.targets if t.id == cards[character.id]]
+            character.attack(target[0])
+            print_attack(character, target[0])
 
 
 def attack_opponent_random(game: ".game.Game") -> ".game.Game":

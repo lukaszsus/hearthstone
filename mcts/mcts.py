@@ -6,6 +6,7 @@ from hearthstone.enums import Zone
 
 from mcts.mctsnode import MCTSNode
 from mcts.mctstree import MCTSTree
+from simulator import printer
 
 
 class MCTS:
@@ -20,10 +21,26 @@ class MCTS:
         self._root = MCTSNode("root", game=self._game)
         self._root.expansion()
 
-        # zwraca kolejny ruch: jakie karty wybrać z ręki i co zaatakować
-        # sugeruję to zrobić w taki sposób, że zwraca listę kart do wybrania z ręki
-        # i listę dwuwymiarową z wszystkimi atakami naszych kart na karty przeciwnika (lub może słownik?)
-        pass
+        for player in self._game.players:
+            printer.print_player_cards(player)
+
+        cards_to_choose = []
+        cards_attack = {}
+
+        # tmp solution - random just to check if other code works
+        player = self._game.current_player
+        sum = 0
+        for card in player.hand:
+            if card.is_playable() and sum + card.cost <= player.mana and random.random() < 0.8:
+                cards_to_choose.append(card.id)
+                sum += card.cost
+
+        for character in player.characters:
+            if character.can_attack():
+                target = random.choice(character.targets)
+                cards_attack[character.id] = target.id  # tutaj chyba trzeba coś innego też zapamiętać, np. życie + atak, bo to ma znaczenie
+
+        return cards_to_choose, cards_attack
 
     def make_one_step(self, game, moves):
         # jeden krok w grze zadany jako moves

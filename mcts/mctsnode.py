@@ -76,7 +76,7 @@ class MCTSNode:
     def play_random_playout_from_state(self) -> (".game.Game", ".player.Player"):
         logger = logging.get_logger("fireplace")
         logger.disabled = True
-        # stop printing logger messages
+        # stop printing logger messages for random playouts
 
         from simulator.game_utils import play_turn
         from simulator.strategies import Strategies
@@ -99,10 +99,10 @@ class MCTSNode:
         except GameOver:
             if game.player1.hero.health > game.player2.hero.health:
                 winner = game.player1.name
-                print("{} WINS! {} : {}".format(game.player1.name, game.player1.hero.health, game.player2.hero.health))
+                # print("{} WINS! {} : {}".format(game.player1.name, game.player1.hero.health, game.player2.hero.health))
             else:
                 winner = game.player2.name
-                print("{} WINS! {} : {}".format(game.player2.name, game.player2.hero.health, game.player1.hero.health))
+                # print("{} WINS! {} : {}".format(game.player2.name, game.player2.hero.health, game.player1.hero.health))
 
         logger.disabled = False  # start printing logger messages
         return game, winner

@@ -1,6 +1,7 @@
 from fireplace import game
 
 from mcts.mcts import MCTS
+from simulator import printer
 from simulator.strategies_greedy import choose_card_from_hand, attack_opponent, \
     ChooseCard, AttackOpponent
 from enum import IntEnum
@@ -41,5 +42,9 @@ def controlling_agent(game: ".game.Game") -> ".game.Game":
 
 def mcts_agent(game: ".game.Game") -> ".game.Game":
     mcts = MCTS(game)
-    moves = mcts.choose_next_move()
-    pass
+    cards_to_choose, cards_attack = mcts.choose_next_move()
+    choose_card_from_hand(game, ChooseCard.DEFINED_CARDS, cards_to_choose)
+    attack_opponent(game, AttackOpponent.DEFINED_CARDS, cards_attack)
+
+    for player in game.players:
+        printer.print_player_cards(player)

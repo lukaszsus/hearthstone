@@ -31,7 +31,7 @@ def print_deck_content(player_name: str, deck: Deck):
 
 
 def print_attack(character, target):
-    log.info("# {}({},{},{}) attacks {}({},{},{})".format(str(character),
+    log.info("### {}({},{},{}) attacks {}({},{},{})".format(str(character),
                                                           character.atk,
                                                           character.health,
                                                           character.cost,
@@ -44,7 +44,7 @@ def print_attack(character, target):
 
 def print_main_phase_start():
     log.info("\n")
-    log.info("Main phase of game starts.")
+    log.info("#### Main phase of game starts.")
 
 
 def print_empty_line():

@@ -33,11 +33,8 @@ def play_full_game() -> ".game.Game":
             if player.name == 'Player1':
                 play_turn(game, game.player1.strategy)
 
-            if player.name == 'Player2':
+            elif player.name == 'Player2':
                 play_turn(game, game.player2.strategy)
-
-            mcts = MCTSNode("elo", game)
-            mcts.play_random_playout_from_state()
 
             printer.print_empty_line()
 

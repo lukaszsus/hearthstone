@@ -24,7 +24,7 @@ def play_full_game() -> ".game.Game":
         player.choice.choose()
 
     game.player1.strategy = Strategies.AGGRESSIVE
-    game.player2.strategy = Strategies.CONTROLLING
+    game.player2.strategy = Strategies.MCTS
     try:
         printer.print_main_phase_start()
         while True:

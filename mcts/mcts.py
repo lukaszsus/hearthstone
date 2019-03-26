@@ -4,8 +4,8 @@ from itertools import chain, combinations, combinations_with_replacement, permut
 
 from hearthstone.enums import Zone
 
-from tree.mctsnode import MCTSNode
-from tree.mctstree import MCTSTree
+from mcts.mctsnode import MCTSNode
+from mcts.mctstree import MCTSTree
 
 
 class MCTS:
@@ -18,6 +18,8 @@ class MCTS:
 
     def choose_next_move(self):
         self._root = MCTSNode("root", game=self._game)
+        self._root.expansion()
+
         # zwraca kolejny ruch: jakie karty wybrać z ręki i co zaatakować
         # sugeruję to zrobić w taki sposób, że zwraca listę kart do wybrania z ręki
         # i listę dwuwymiarową z wszystkimi atakami naszych kart na karty przeciwnika (lub może słownik?)

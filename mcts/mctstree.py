@@ -2,7 +2,7 @@
 # You Programming (http://www.youprogramming.com)
 # May 03, 2014
 
-from tree.mctsnode import MCTSNode
+from mcts.mctsnode import MCTSNode
 
 (_ROOT, _DEPTH, _BREADTH) = range(3)
 

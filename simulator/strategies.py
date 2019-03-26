@@ -1,12 +1,8 @@
-import random
-
 from fireplace import game
-from hearthstone.enums import CardType
 
-from simulator.mcts import MCTS
+from mcts.mcts import MCTS
 from simulator.strategies_greedy import choose_card_from_hand, attack_opponent, \
     ChooseCard, AttackOpponent
-from simulator.printer import print_attack, print_player_cards
 from enum import IntEnum
 
 

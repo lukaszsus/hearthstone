@@ -18,6 +18,7 @@ class MCTSNode:
         self.__game = copy.deepcopy(game)
         self.__children = []
         self.__parent = None
+        self.player = game.current_player
 
     @property
     def identifier(self):
@@ -52,13 +53,15 @@ class MCTSNode:
         # TODO: sprawdzić
         game = copy.deepcopy(self.game)
         game, winner = self.play_random_playout_from_state()
-        self.__num_playouts += 1
-        if winner.name == "player1":    # zakladamy, ze player1 to "nasz" gracz MCTS
-            self.__num_wins += 1
+        self.backpropagate(winner)
 
-    def backpropagate(self):
+    def backpropagate(self, winner):
         # TODO przekazać wynik playoutu do wyższych nodeów
-        pass
+        if self.parent is not None:
+            self.__num_playouts += 1
+            if winner.name == self.player:
+                self.__num_wins += 1
+            self.parent.backpropagate(winner)
 
     def expansion(self):
         # TODO stworzenie dzieci

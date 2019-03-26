@@ -15,7 +15,7 @@ from simulator import printer
 
 
 class NodeType(IntEnum):
-    NONE = 0
+    ROOT = 0
     CHOOSE_CARD = 1
     ATTACK = 2
 
@@ -29,7 +29,7 @@ class MCTSNode:
         self.__children = []
         self.__parent = None
         self.player = game.current_player
-        self.type = NodeType.NONE
+        self.type = NodeType.ROOT
 
     @property
     def identifier(self):

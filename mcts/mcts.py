@@ -19,6 +19,7 @@ class MCTS:
 
     def choose_next_move(self):
         self._root = self._tree[self._root_id]
+        self._root.selection()
         #
         # for player in self._game.players:
         #     printer.print_player_cards(player)

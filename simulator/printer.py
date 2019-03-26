@@ -50,3 +50,10 @@ def print_main_phase_start():
 def print_empty_line():
     log.info("\n")
 
+
+def print_playing_card_on_target(card, target):
+    log.info("Playing %r on %r" % (card, target))
+
+
+def print_choosing_card(choice):
+    log.info("Choosing card %r" % (choice))

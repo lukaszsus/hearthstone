@@ -13,6 +13,7 @@ from xml.etree import ElementTree
 
 from hearthstone.enums import CardClass, CardType
 # Autogenerate the list of cardset modules
+from mcts.mctsnode import MCTSNode
 from simulator.game_utils import setup_game, play_turn
 from simulator.strategies import Strategies
 
@@ -34,6 +35,9 @@ def play_full_game() -> ".game.Game":
 
             if player.name == 'Player2':
                 play_turn(game, game.player2.strategy)
+
+            mcts = MCTSNode("elo", game)
+            mcts.play_random_playout_from_state()
 
             printer.print_empty_line()
 

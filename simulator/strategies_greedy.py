@@ -4,7 +4,7 @@ from itertools import chain, combinations
 
 from hearthstone.enums import CardType
 
-from simulator.printer import print_attack
+from simulator.printer import print_attack, print_playing_card_on_target, print_choosing_card
 
 
 class ChooseCard(IntEnum):
@@ -51,12 +51,12 @@ def choose_card_from_hand_sorting(game: ".game.Game") -> ".game.Game":
                 card = random.choice(card.choose_cards)
             if card.requires_target():  #
                 target = random.choice(card.targets)
-            print("Playing %r on %r" % (card, target))
+            print_playing_card_on_target(card, target)
             card.play(target=target)
 
             if player.choice:  # chyba wybiera jakąś kartę???
                 choice = random.choice(player.choice.cards)
-                print("Choosing card %r" % (choice))
+                print_choosing_card(choice)
                 player.choice.choose(choice)
 
 
@@ -91,12 +91,12 @@ def choose_card_from_hand_optimal_cost(game: ".game.Game") -> ".game.Game":
                 card = random.choice(card.choose_cards)
             if card.requires_target():  #
                 target = random.choice(card.targets)
-            print("Playing %r on %r" % (card, target))
+            print_playing_card_on_target(card, target)
             card.play(target=target)
 
             if player.choice:  # chyba wybiera jakąś kartę???
                 choice = random.choice(player.choice.cards)
-                print("Choosing card %r" % (choice))
+                print_choosing_card(choice)
                 player.choice.choose(choice)
 
 
@@ -111,12 +111,12 @@ def choose_card_from_hand_random(game: ".game.Game") -> ".game.Game":
                 card = random.choice(card.choose_cards)
             if card.requires_target():  #
                 target = random.choice(card.targets)
-            print("Playing %r on %r" % (card, target))
+            print_playing_card_on_target(card, target)
             card.play(target=target)
 
             if player.choice:  # chyba wybiera jakąś kartę???
                 choice = random.choice(player.choice.cards)
-                print("Choosing card %r" % (choice))
+                print_choosing_card(choice)
                 player.choice.choose(choice)
 
 

@@ -6,6 +6,9 @@
 # 21st March 2019
 import copy
 
+from logging import basicConfig, WARNING, DEBUG
+
+from fireplace import logging
 from fireplace.exceptions import GameOver
 from simulator import printer
 
@@ -71,6 +74,10 @@ class MCTSNode:
         pass
 
     def play_random_playout_from_state(self) -> (".game.Game", ".player.Player"):
+        logger = logging.get_logger("fireplace")
+        logger.disabled = True
+        # stop printing logger messages
+
         from simulator.game_utils import play_turn
         from simulator.strategies import Strategies
         game = self.__game
@@ -97,6 +104,7 @@ class MCTSNode:
                 winner = game.player2.name
                 print("{} WINS! {} : {}".format(game.player2.name, game.player2.hero.health, game.player1.hero.health))
 
+        logger.disabled = False  # start printing logger messages
         return game, winner
 
     @game.setter

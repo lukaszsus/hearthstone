@@ -5,12 +5,19 @@
 # Modified by Łukasz Sus, Edyta Rogula
 # 21st March 2019
 import copy
+from enum import IntEnum
 
 from logging import basicConfig, WARNING, DEBUG
 
 from fireplace import logging
 from fireplace.exceptions import GameOver
 from simulator import printer
+
+
+class NodeType(IntEnum):
+    NONE = 0
+    CHOOSE_CARD = 1
+    ATTACK = 2
 
 
 class MCTSNode:
@@ -22,6 +29,7 @@ class MCTSNode:
         self.__children = []
         self.__parent = None
         self.player = game.current_player
+        self.type = NodeType.NONE
 
     @property
     def identifier(self):
@@ -48,8 +56,6 @@ class MCTSNode:
         return self.__parent
 
     def add_child(self, identifier):
-        # TODO: przemyśleć, co z identifiers!!!
-        identifier.__parent = self
         self.__children.append(identifier)
 
     def random_playout(self):
@@ -110,3 +116,7 @@ class MCTSNode:
     @game.setter
     def game(self, value):
         self._game = value
+
+    @parent.setter
+    def parent(self, value):
+        self._parent = value

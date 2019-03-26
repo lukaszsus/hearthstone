@@ -46,5 +46,5 @@ def mcts_agent(game: ".game.Game") -> ".game.Game":
     choose_card_from_hand(game, ChooseCard.DEFINED_CARDS, cards_to_choose)
     attack_opponent(game, AttackOpponent.DEFINED_CARDS, cards_attack)
 
-    for player in game.players:
-        printer.print_player_cards(player)
+    # for player in game.players:
+    #     printer.print_player_cards(player)

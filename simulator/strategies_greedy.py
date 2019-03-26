@@ -131,28 +131,27 @@ def choose_card_from_hand_defined(game: ".game.Game", cards) -> ".game.Game":
 
     # iterate over our hand and play chosen cards
     for card in player.hand:
-        if card.id in cards:
-            if card.is_playable():  # check if cards is playable
-                target = None
-                if card.must_choose_one:  # there are some choosable special skills
-                    card = random.choice(card.choose_cards)
-                if card.requires_target():  #
-                    target = random.choice(card.targets)
-                print_playing_card_on_target(card, target)
-                card.play(target=target)
+        if card.uuid in cards and card.is_playable():  # check if cards is playable
+            target = None
+            if card.must_choose_one:  # there are some choosable special skills
+                card = random.choice(card.choose_cards)
+            if card.requires_target():  #
+                target = random.choice(card.targets)
+            print_playing_card_on_target(card, target)
+            card.play(target=target)
 
-                if player.choice:  # chyba wybiera jakąś kartę???
-                    choice = random.choice(player.choice.cards)
-                    print_choosing_card(choice)
-                    player.choice.choose(choice)
+            if player.choice:  # chyba wybiera jakąś kartę???
+                choice = random.choice(player.choice.cards)
+                print_choosing_card(choice)
+                player.choice.choose(choice)
 
 
 def attack_opponent_defined(game: ".game.Game", cards) -> ".game.Game":
     player = game.current_player
 
     for character in player.characters:
-        if character.can_attack() and character.id in cards.keys():
-            target = [t for t in character.targets if t.id == cards[character.id]]
+        if character.can_attack() and character.uuid in cards.keys():
+            target = [t for t in character.targets if t.uuid == cards[character.uuid]]
             character.attack(target[0])
             print_attack(character, target[0])
 

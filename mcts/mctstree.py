@@ -21,6 +21,7 @@ class MCTSTree:
         self[identifier] = node
 
         if parent is not None:
+            self[identifier].parent = parent
             self[parent].add_child(identifier)
 
         return node

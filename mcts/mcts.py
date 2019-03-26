@@ -18,11 +18,10 @@ class MCTS:
         self._tree.add_node(self._root_id, copy.deepcopy(self._game))     # root initialized
 
     def choose_next_move(self):
-        self._root = MCTSNode("root", game=self._game)
-        self._root.expansion()
-
-        for player in self._game.players:
-            printer.print_player_cards(player)
+        self._root = self._tree[self._root_id]
+        #
+        # for player in self._game.players:
+        #     printer.print_player_cards(player)
 
         cards_to_choose = []
         cards_attack = {}
@@ -32,19 +31,15 @@ class MCTS:
         sum = 0
         for card in player.hand:
             if card.is_playable() and sum + card.cost <= player.mana and random.random() < 0.8:
-                cards_to_choose.append(card.id)
+                cards_to_choose.append(card.uuid)
                 sum += card.cost
 
         for character in player.characters:
             if character.can_attack():
                 target = random.choice(character.targets)
-                cards_attack[character.id] = target.id  # tutaj chyba trzeba coś innego też zapamiętać, np. życie + atak, bo to ma znaczenie
+                cards_attack[character.uuid] = target.uuid
 
         return cards_to_choose, cards_attack
-
-    def make_one_step(self, game, moves):
-        # jeden krok w grze zadany jako moves
-        pass
 
     def best_child(self):
         # wybiera najlepsze dziecko z roota
@@ -120,10 +115,10 @@ def generate_games_with_all_possible_choices_of_attacks(game: "simulator.game.Ga
     """Biblioteka itertools nie dostarcza wariacji z powtórzeniami,
     nawet nie znalazłem takiego pojęcia po angielsku. Aby najprościej stworzyć wariacje,
     wykonuję wszystkie kombinacje z powtórzeniami preciwników i wszystkie permutacje kart gracza.
-    Nie jest to rozwiązanie doskonałe, ponieważ powoduje powtórzenia,
+    Nie jest to rozwiązanie dosłe, ponieważ powoduje powtórzenia,
     jeżeli nastąpi powtórzenie w kombinacji. Poza tym dobrze byłoby sprawdzać i wyrzucać przypadki,
     w których kolejny stworek atakuje już zabitego w tej kolejce przeciwnika, ale jest to nieco trudne.
-    Posłguję się indeksami, aby móc to potem odtworzyć (spodziewam się, że karty to też obiekty)."""
+    Posłguję się indeksami, aby móc to potem odtworzyć (spodziewkonaam się, że karty to też obiekty)."""
 
     player = game.current_player
 

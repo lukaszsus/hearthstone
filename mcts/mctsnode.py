@@ -6,12 +6,14 @@
 # 21st March 2019
 import copy
 from enum import IntEnum
+from itertools import chain, combinations
 
 from logging import basicConfig, WARNING, DEBUG
 
 from fireplace import logging
 from fireplace.exceptions import GameOver
 from simulator import printer
+from simulator.strategies_greedy import choose_card_from_hand_defined
 
 
 class NodeType(IntEnum):
@@ -22,7 +24,7 @@ class NodeType(IntEnum):
 
 
 class MCTSNode:
-    def __init__(self, identifier, game, type=NodeType.NONE):
+    def __init__(self, identifier, game, type=NodeType.NONE, chosen=None):
         self.__identifier = identifier
         self.__num_wins = 0
         self.__num_playouts = 0
@@ -31,6 +33,7 @@ class MCTSNode:
         self.__parent = None
         self.player = game.current_player
         self.type = type
+        self.chosen = chosen
 
     @property
     def identifier(self):
@@ -59,20 +62,20 @@ class MCTSNode:
     def add_child(self, identifier):
         self.__children.append(identifier)
 
-    def random_playout(self):
+    def random_playout(self, tree):
         # TODO: sprawdzić
         game = copy.deepcopy(self.game)
         _, winner = self._play_random_playout_from_state()
         self.game = game
-        self.backpropagate(winner)
+        self.backpropagate(winner, tree)
 
-    def backpropagate(self, winner):
+    def backpropagate(self, winner, tree):
         # TODO sprawdzić
         self.__num_playouts += 1
-        if winner.name == self.player:
+        if winner == self.player.name:
             self.__num_wins += 1
         if self.parent is not None:
-            self.parent.backpropagate(winner)
+            tree[self.parent].backpropagate(winner, tree)
 
     def expansion(self, tree):
         # TODO stworzenie dzieci tego node'a
@@ -80,23 +83,32 @@ class MCTSNode:
         # append them as children
         if self.type == NodeType.CHOOSE_CARD:
             # ruch związany z wyborem kart - kolejny będzie z atakiem
-            self.add_nodes_with_all_possible_card_choices()
+            self.add_nodes_with_all_possible_card_choices(tree)
         elif self.type == NodeType.ATTACK:
             # ruch związany z atakowaniem - kolejny będzie ruch niedeterministyczny z ciągnięciem kart itp.
-            self.add_nodes_with_all_possible_attacks()
+            # chyba najsensowniej będzie robić jeden ruch (node) osobny dla każdej karty, która może atakować?
+            self.add_nodes_with_all_possible_attacks(tree)
         elif self.type == NodeType.END_TURN:
             # ruch niedeterministyczny (?) - ciągnięcie karty, zmiana playerów etc.
             game = copy.deepcopy(self.game)
             game.end_turn()
             tree.add_node(identifier=tree.id_gen.get_next(), game=game,
-                          type=NodeType.CHOOSE_CARD, parent=self.identifier)
+                          type=NodeType.CHOOSE_CARD, parent=self.identifier, chosen=None)
 
-    def add_nodes_with_all_possible_card_choices(self):
-        # wszystkie nody - type NodeType.ATTACK
-        pass
+    def add_nodes_with_all_possible_card_choices(self, tree):
+        # wszystkie nowe nody - type NodeType.ATTACK
+        for card_set in chain.from_iterable(combinations(self.player.hand, n) for n in range(len(self.player.hand) + 1)):
+            sum_cost = sum(c.cost for c in card_set)
+            card_set = [c.uuid for c in card_set]
+            if sum_cost <= self.player.mana:
+                game = copy.deepcopy(self.game)
+                choose_card_from_hand_defined(game, card_set)
+                tree.add_node(identifier=tree.id_gen.get_next(), game=game,
+                              type=NodeType.ATTACK, parent=self.identifier, chosen=card_set)
 
-    def add_nodes_with_all_possible_attacks(self):
-        # wszystkie nody - type NodeType.END_TURN
+    def add_nodes_with_all_possible_attacks(self, tree):
+        # wszystkie nowe nody - type NodeType.END_TURN
+        # TODO
         pass
 
     def _play_random_playout_from_state(self) -> (".game.Game", ".player.Player"):
@@ -135,8 +147,8 @@ class MCTSNode:
 
     @game.setter
     def game(self, value):
-        self._game = value
+        self.__game = value
 
     @parent.setter
     def parent(self, value):
-        self._parent = value
+        self.__parent = value

@@ -4,7 +4,7 @@ from itertools import chain, combinations, combinations_with_replacement, permut
 
 from hearthstone.enums import Zone
 
-from mcts.mctsnode import MCTSNode
+from mcts.mctsnode import MCTSNode, NodeType
 from mcts.mctstree import MCTSTree, IdGenerator
 from simulator import printer
 
@@ -14,10 +14,10 @@ class MCTS:
         self._game = copy.deepcopy(game)
         self._tree = MCTSTree()
         self._root_id = self._tree.id_gen.get_next()
-        self._tree.add_node(self._root_id, copy.deepcopy(self._game))     # root initialized
+        self._tree.add_node(self._root_id, game=copy.deepcopy(self._game), type=NodeType.CHOOSE_CARD)     # root initialized
 
     def choose_next_move(self):
-        self._root = self._tree[self._root_id]
+        #self._root = self._tree[self._root_id]
         self._tree.selection()
         #
         # for player in self._game.players:

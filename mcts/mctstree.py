@@ -22,8 +22,8 @@ class MCTSTree:
     def nodes(self):
         return self.__nodes
 
-    def add_node(self, identifier, game, type=NodeType.NONE, parent=None):
-        node = MCTSNode(identifier, game=game, type=type)
+    def add_node(self, identifier, game, type=NodeType.NONE, parent=None, chosen=None):
+        node = MCTSNode(identifier, game=game, type=type, chosen=chosen)
 
         if len(self.__nodes) == 0:
             self.__root = identifier
@@ -87,16 +87,16 @@ class MCTSTree:
                     # TODO: check this ucts value, probably use something else for selection???
                     ucts = self[child].num_wins / self[child].num_playouts + self.exploration_param * \
                            np.sqrt(np.log(self[self.__root].num_playouts) / self[child].num_playouts)
-                    if ucts > max_ucts:
+                    if ucts >= max_ucts:
                         max_ucts = ucts
                         selected_child = child
-                    self[selected_child].expansion(self)
-                    current_id = selected_child
+                self[selected_child].expansion(self)  # TODO: tu coś nie działa
+                current_id = selected_child
                 continue
 
             if unvisited_child is not None:
                 # play random playout from selected node and backpropagate
-                self[unvisited_child].random_playout()
+                self[unvisited_child].random_playout(self)
                 current_id = self.__root
 
     def get_unvisited(self, children):

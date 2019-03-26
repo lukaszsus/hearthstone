@@ -17,6 +17,17 @@ class Strategies(IntEnum):
     MCTS = 3
 
 
+def choose_agent(game: ".game.Game", strategy):
+    if strategy == Strategies.RANDOM:
+        random_agent(game)
+    elif strategy == Strategies.AGGRESSIVE:
+        aggressive_agent(game)
+    elif strategy == Strategies.CONTROLLING:
+        controlling_agent(game)
+    elif strategy == Strategies.MCTS:
+        mcts_agent(game)
+
+
 def random_agent(game: ".game.Game") -> ".game.Game":
     choose_card_from_hand(game, ChooseCard.RANDOM)
     attack_opponent(game, AttackOpponent.RANDOM)

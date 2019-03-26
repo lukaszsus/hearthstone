@@ -6,7 +6,8 @@
 # 21st March 2019
 import copy
 
-from simulator.game import play_random_playout_from_state
+from fireplace.exceptions import GameOver
+from simulator import printer
 
 
 class MCTSNode:
@@ -50,7 +51,7 @@ class MCTSNode:
     def random_playout(self):
         # TODO: sprawdzić
         game = copy.deepcopy(self.game)
-        game, winner = play_random_playout_from_state(game)
+        game, winner = self.play_random_playout_from_state()
         self.__num_playouts += 1
         if winner.name == "player1":    # zakladamy, ze player1 to "nasz" gracz MCTS
             self.__num_wins += 1
@@ -62,3 +63,32 @@ class MCTSNode:
     def expansion(self):
         # TODO stworzenie dzieci
         pass
+
+    def play_random_playout_from_state(self) -> (".game.Game", ".player.Player"):
+        from simulator.game_utils import play_turn
+        from simulator.strategies import Strategies
+        game = self.__game
+        winner = None
+        player1_strategy = Strategies.RANDOM
+        player2_strategy = Strategies.RANDOM
+
+        try:
+            while True:
+                player = game.current_player
+                if player.name == 'Player1':
+                    play_turn(game, player1_strategy)
+
+                if player.name == 'Player2':
+                    play_turn(game, player2_strategy)
+
+                printer.print_empty_line()
+
+        except GameOver:
+            if game.player1.hero.health > game.player2.hero.health:
+                winner = game.player1.name
+                print("{} WINS! {} : {}".format(game.player1.name, game.player1.hero.health, game.player2.hero.health))
+            else:
+                winner = game.player2.name
+                print("{} WINS! {} : {}".format(game.player2.name, game.player2.hero.health, game.player1.hero.health))
+
+        return game, winner

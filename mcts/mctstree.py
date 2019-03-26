@@ -57,5 +57,5 @@ class MCTSTree:
         self.__nodes[key] = item
 
     def selection(self):
-        # TODO
+        # TODO selekcja node'a do rozwinięcia
         pass

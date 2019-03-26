@@ -45,26 +45,29 @@ class MCTSNode:
         return self.__parent
 
     def add_child(self, identifier):
-        # TODO: przemyśleć, co z identifiers
+        # TODO: przemyśleć, co z identifiers!!!
         identifier.__parent = self
         self.__children.append(identifier)
 
     def random_playout(self):
         # TODO: sprawdzić
         game = copy.deepcopy(self.game)
-        game, winner = self.play_random_playout_from_state()
+        _, winner = self.play_random_playout_from_state()
+        self.game = game
         self.backpropagate(winner)
 
     def backpropagate(self, winner):
-        # TODO przekazać wynik playoutu do wyższych nodeów
+        # TODO sprawdzić
+        self.__num_playouts += 1
+        if winner.name == self.player:
+            self.__num_wins += 1
         if self.parent is not None:
-            self.__num_playouts += 1
-            if winner.name == self.player:
-                self.__num_wins += 1
             self.parent.backpropagate(winner)
 
     def expansion(self):
         # TODO stworzenie dzieci
+        # get all possible moves
+        # append them as children
         pass
 
     def play_random_playout_from_state(self) -> (".game.Game", ".player.Player"):
@@ -95,3 +98,7 @@ class MCTSNode:
                 print("{} WINS! {} : {}".format(game.player2.name, game.player2.hero.health, game.player1.hero.health))
 
         return game, winner
+
+    @game.setter
+    def game(self, value):
+        self._game = value

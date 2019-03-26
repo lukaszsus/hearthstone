@@ -124,12 +124,12 @@ def generate_games_with_all_possible_choices_of_attacks(game: "simulator.game.Ga
     for char_perm in characters_permutations:
         for poss_target in possible_targets:
             possible_games.append(copy.deepcopy(game))
-            attack_if_possible(possible_games[-1], char_perm, poss_target)
+            attack_chosen_if_possible(possible_games[-1], char_perm, poss_target)
 
     return possible_games
 
 
-def attack_if_possible(game: "simulator.game.Game", character_indices: list, target_indices: list):
+def attack_chosen_if_possible(game: "simulator.game.Game", character_indices: list, target_indices: list):
     player = game.current_player
 
     characters = [player.characters[index] for index in character_indices]

@@ -9,7 +9,7 @@ import os
 from hearthstone.enums import CardType, CardClass
 
 from simulator import printer
-from simulator.strategies import choose_agent, Strategies
+from simulator.strategies import play_turn_using_strategy, Strategies
 
 _cards_module = os.path.join(os.path.dirname(__file__), "cards")
 CARD_SETS = [cs for _, cs, ispkg in iter_modules([_cards_module]) if ispkg]
@@ -249,7 +249,7 @@ def play_turn(game: ".game.Game", strategy: int=None) -> ".game.Game":
         if character.type == CardType.SPELL:
             player.hand.remove(character)
 
-    choose_agent(game, strategy)
+    play_turn_using_strategy(game, strategy)
 
     game.end_turn()
     return game

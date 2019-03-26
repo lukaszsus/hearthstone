@@ -15,13 +15,14 @@ from simulator import printer
 
 
 class NodeType(IntEnum):
-    ROOT = 0
+    NONE = 0
     CHOOSE_CARD = 1
     ATTACK = 2
+    END_TURN = 3
 
 
 class MCTSNode:
-    def __init__(self, identifier, game):
+    def __init__(self, identifier, game, type=NodeType.NONE):
         self.__identifier = identifier
         self.__num_wins = 0
         self.__num_playouts = 0
@@ -29,7 +30,7 @@ class MCTSNode:
         self.__children = []
         self.__parent = None
         self.player = game.current_player
-        self.type = NodeType.ROOT
+        self.type = type
 
     @property
     def identifier(self):
@@ -61,7 +62,7 @@ class MCTSNode:
     def random_playout(self):
         # TODO: sprawdzić
         game = copy.deepcopy(self.game)
-        _, winner = self.play_random_playout_from_state()
+        _, winner = self._play_random_playout_from_state()
         self.game = game
         self.backpropagate(winner)
 
@@ -73,13 +74,32 @@ class MCTSNode:
         if self.parent is not None:
             self.parent.backpropagate(winner)
 
-    def expansion(self):
-        # TODO stworzenie dzieci
+    def expansion(self, tree):
+        # TODO stworzenie dzieci tego node'a
         # get all possible moves
         # append them as children
+        if self.type == NodeType.CHOOSE_CARD:
+            # ruch związany z wyborem kart - kolejny będzie z atakiem
+            self.add_nodes_with_all_possible_card_choices()
+        elif self.type == NodeType.ATTACK:
+            # ruch związany z atakowaniem - kolejny będzie ruch niedeterministyczny z ciągnięciem kart itp.
+            self.add_nodes_with_all_possible_attacks()
+        elif self.type == NodeType.END_TURN:
+            # ruch niedeterministyczny (?) - ciągnięcie karty, zmiana playerów etc.
+            game = copy.deepcopy(self.game)
+            game.end_turn()
+            tree.add_node(identifier=tree.id_gen.get_next(), game=game,
+                          type=NodeType.CHOOSE_CARD, parent=self.identifier)
+
+    def add_nodes_with_all_possible_card_choices(self):
+        # wszystkie nody - type NodeType.ATTACK
         pass
 
-    def play_random_playout_from_state(self) -> (".game.Game", ".player.Player"):
+    def add_nodes_with_all_possible_attacks(self):
+        # wszystkie nody - type NodeType.END_TURN
+        pass
+
+    def _play_random_playout_from_state(self) -> (".game.Game", ".player.Player"):
         logger = logging.get_logger("fireplace")
         logger.disabled = True
         # stop printing logger messages for random playouts

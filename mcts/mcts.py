@@ -5,21 +5,20 @@ from itertools import chain, combinations, combinations_with_replacement, permut
 from hearthstone.enums import Zone
 
 from mcts.mctsnode import MCTSNode
-from mcts.mctstree import MCTSTree
+from mcts.mctstree import MCTSTree, IdGenerator
 from simulator import printer
 
 
 class MCTS:
     def __init__(self, game):
         self._game = copy.deepcopy(game)
-        self._id_gen = IdGenerator()
         self._tree = MCTSTree()
-        self._root_id = self._id_gen.get_next()
+        self._root_id = self._tree.id_gen.get_next()
         self._tree.add_node(self._root_id, copy.deepcopy(self._game))     # root initialized
 
     def choose_next_move(self):
         self._root = self._tree[self._root_id]
-        self._root.selection()
+        self._tree.selection()
         #
         # for player in self._game.players:
         #     printer.print_player_cards(player)
@@ -43,7 +42,7 @@ class MCTS:
         return cards_to_choose, cards_attack
 
     def best_child(self):
-        # wybiera najlepsze dziecko z roota
+        # TODO: wybiera najlepsze dziecko z roota?
         pass
 
 
@@ -155,13 +154,3 @@ def attack_chosen_if_possible(game: "simulator.game.Game", character_indices: li
                 target = characters[i].targets[target_indices[i]]
                 if target.zone == Zone.PLAY:
                     characters[i].attack(target)
-
-
-class IdGenerator:
-    def __init__(self):
-        self.__next_id = 0
-
-    def get_next(self):
-        to_ret = self.__next_id
-        self.__next_id += 1
-        return to_ret

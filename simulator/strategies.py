@@ -14,7 +14,7 @@ class Strategies(IntEnum):
     MCTS = 3
 
 
-def choose_agent(game: ".game.Game", strategy):
+def play_turn_using_strategy(game: ".game.Game", strategy):
     if strategy == Strategies.RANDOM:
         random_agent(game)
     elif strategy == Strategies.AGGRESSIVE:

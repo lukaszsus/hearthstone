@@ -152,8 +152,9 @@ def attack_opponent_defined(game: ".game.Game", cards) -> ".game.Game":
     for character in player.characters:
         if character.can_attack() and character.uuid in cards.keys():
             target = [t for t in character.targets if t.uuid == cards[character.uuid]]
-            character.attack(target[0])
-            print_attack(character, target[0])
+            if len(target) > 0:
+                character.attack(target[0])
+                print_attack(character, target[0])
 
 
 def attack_opponent_random(game: ".game.Game") -> ".game.Game":

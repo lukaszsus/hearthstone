@@ -223,7 +223,7 @@ def setup_game() -> ".game.Game":
     printer.print_deck_content("Player2", deck2)
 
     player1 = Player("Player1", deck1, CardClass.MAGE.default_hero)
-    player2 = Player("Player2", deck2, CardClass.MAGE.default_hero)
+    player2 = Player("Player2", deck2, CardClass.HUNTER.default_hero)
 
     game = Game(players=(player1, player2))
     game.start()

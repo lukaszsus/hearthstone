@@ -39,9 +39,9 @@ class MCTSTree:
     def display(self, identifier, depth=_ROOT):
         children = self[identifier].children
         if depth == _ROOT:
-            print("{0}".format(identifier))
+            print("{0}({1}/{2})".format(identifier, self[identifier].num_wins, self[identifier].num_playouts))
         else:
-            print("\t"*depth, "{0}".format(identifier))
+            print("\t"*depth, "{0}({1}/{2})".format(identifier, self[identifier].num_wins, self[identifier].num_playouts))
 
         depth += 1
         for child in children:
@@ -71,10 +71,13 @@ class MCTSTree:
         # TODO sprawdzić
         current_id = self.__root
         i = 0
-        while i < 10:  # TODO: warunek inny???
+        while i < 100:  # TODO: warunek inny???
             i += 1
             try:
                 unvisited_child = random.choice(self.get_unvisited(self[current_id].children))
+                self[unvisited_child].random_playout(self)
+                current_id = self.__root
+                continue
             except IndexError:
                 # when selected_child is None, because get_unvisited is empty
                 # which means all children nodes were visited - we have to select one of them!
@@ -90,14 +93,8 @@ class MCTSTree:
                     if ucts >= max_ucts:
                         max_ucts = ucts
                         selected_child = child
-                self[selected_child].expansion(self)  # TODO: tu coś nie działa
                 current_id = selected_child
                 continue
-
-            if unvisited_child is not None:
-                # play random playout from selected node and backpropagate
-                self[unvisited_child].random_playout(self)
-                current_id = self.__root
 
     def get_unvisited(self, children):
         unvisited = []

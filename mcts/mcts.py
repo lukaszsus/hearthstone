@@ -15,29 +15,47 @@ class MCTS:
         self._tree = MCTSTree()
         self._root_id = self._tree.id_gen.get_next()
         self._tree.add_node(self._root_id, game=copy.deepcopy(self._game), type=NodeType.CHOOSE_CARD)     # root initialized
+        self.player = self._game.current_player
 
     def choose_next_move(self):
-        #self._root = self._tree[self._root_id]
         self._tree.selection()
-        #
-        # for player in self._game.players:
-        #     printer.print_player_cards(player)
 
         cards_to_choose = []
         cards_attack = {}
 
-        # tmp solution - random just to check if other code works
-        player = self._game.current_player
-        sum = 0
-        for card in player.hand:
-            if card.is_playable() and sum + card.cost <= player.mana and random.random() < 0.8:
-                cards_to_choose.append(card.uuid)
-                sum += card.cost
+        self._tree.display(self._root_id)
 
-        for character in player.characters:
-            if character.can_attack():
-                target = random.choice(character.targets)
-                cards_attack[character.uuid] = target.uuid
+        current_id = self._root_id
+        while self._tree[current_id].player.name == self.player.name:
+            if current_id is not None:
+                if self._tree[current_id].chosen is not None:
+                    if 'cards' in self._tree[current_id].chosen.keys():
+                        cards_to_choose.extend(self._tree[current_id].chosen['cards'])
+                    if 'attack' in self._tree[current_id].chosen.keys():
+                        cards_attack[self._tree[current_id].chosen['attack'][0]] = self._tree[current_id].chosen['attack'][1]
+            max_games = 0
+            next_id = None
+            for child in self._tree[current_id].children:
+                if self._tree[child].num_playouts > max_games:
+                    max_games = self._tree[child].num_playouts
+                    next_id = child
+            if next_id is not None:
+                current_id = next_id
+            else:
+                break
+
+        # tmp solution - random just to check if other code works
+        # player = self._game.current_player
+        # sum = 0
+        # for card in player.hand:
+        #     if card.is_playable() and sum + card.cost <= player.mana and random.random() < 0.8:
+        #         cards_to_choose.append(card.uuid)
+        #         sum += card.cost
+        #
+        # for character in player.characters:
+        #     if character.can_attack():
+        #         target = random.choice(character.targets)
+        #         cards_attack[character.uuid] = target.uuid
 
         return cards_to_choose, cards_attack
 

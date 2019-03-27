@@ -12,8 +12,10 @@ from logging import basicConfig, WARNING, DEBUG
 
 from fireplace import logging
 from fireplace.exceptions import GameOver
+from hearthstone.enums import CardType
+
 from simulator import printer
-from simulator.strategies_greedy import choose_card_from_hand_defined
+from simulator.strategies_greedy import choose_card_from_hand_defined, attack_opponent_defined
 
 
 class NodeType(IntEnum):
@@ -32,7 +34,7 @@ class MCTSNode:
         self.__children = []
         self.__parent = None
         self.player = game.current_player
-        self.type = type
+        self.next_node_type = type
         self.chosen = chosen
 
     @property
@@ -78,22 +80,24 @@ class MCTSNode:
             tree[self.parent].backpropagate(winner, tree)
 
     def expansion(self, tree):
-        # TODO stworzenie dzieci tego node'a
-        # get all possible moves
-        # append them as children
-        if self.type == NodeType.CHOOSE_CARD:
+        logger = logging.get_logger("fireplace")
+        logger.disabled = True
+
+        if self.next_node_type == NodeType.CHOOSE_CARD:
             # ruch związany z wyborem kart - kolejny będzie z atakiem
             self.add_nodes_with_all_possible_card_choices(tree)
-        elif self.type == NodeType.ATTACK:
+        elif self.next_node_type == NodeType.ATTACK:
             # ruch związany z atakowaniem - kolejny będzie ruch niedeterministyczny z ciągnięciem kart itp.
             # chyba najsensowniej będzie robić jeden ruch (node) osobny dla każdej karty, która może atakować?
             self.add_nodes_with_all_possible_attacks(tree)
-        elif self.type == NodeType.END_TURN:
+        elif self.next_node_type == NodeType.END_TURN:
             # ruch niedeterministyczny (?) - ciągnięcie karty, zmiana playerów etc.
             game = copy.deepcopy(self.game)
             game.end_turn()
             tree.add_node(identifier=tree.id_gen.get_next(), game=game,
                           type=NodeType.CHOOSE_CARD, parent=self.identifier, chosen=None)
+
+        logger.disabled = False
 
     def add_nodes_with_all_possible_card_choices(self, tree):
         # wszystkie nowe nody - type NodeType.ATTACK
@@ -104,12 +108,26 @@ class MCTSNode:
                 game = copy.deepcopy(self.game)
                 choose_card_from_hand_defined(game, card_set)
                 tree.add_node(identifier=tree.id_gen.get_next(), game=game,
-                              type=NodeType.ATTACK, parent=self.identifier, chosen=card_set)
+                              type=NodeType.ATTACK, parent=self.identifier, chosen={'cards': card_set})
 
     def add_nodes_with_all_possible_attacks(self, tree):
-        # wszystkie nowe nody - type NodeType.END_TURN
-        # TODO
-        pass
+        # nowe nody - type NodeType.END_TURN
+        # losowo karta, która może atakować, bo może atakować tylko raz w kolejce
+        num_attacks = 0
+        for character in self.player.characters:
+            if character.type == CardType.MINION and character.can_attack():
+                num_attacks += 1
+                for target in character.targets:
+                    game = copy.deepcopy(self.game)
+                    attack_opponent_defined(game, {character.uuid : target.uuid})
+                    tree.add_node(identifier=tree.id_gen.get_next(), game=game,
+                                  type=NodeType.ATTACK, parent=self.identifier,
+                                  chosen={'attack': [character.uuid, target.uuid]})
+                break
+        if num_attacks == 0:
+            game = copy.deepcopy(self.game)
+            tree.add_node(identifier=tree.id_gen.get_next(), game=game,
+                          type=NodeType.END_TURN, parent=self.identifier, chosen=None)
 
     def _play_random_playout_from_state(self) -> (".game.Game", ".player.Player"):
         logger = logging.get_logger("fireplace")

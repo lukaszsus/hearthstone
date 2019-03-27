@@ -2,6 +2,7 @@ import copy
 import random
 from itertools import chain, combinations, combinations_with_replacement, permutations
 
+from fireplace import logging
 from hearthstone.enums import Zone
 
 from mcts.mctsnode import MCTSNode, NodeType
@@ -18,12 +19,16 @@ class MCTS:
         self.player = self._game.current_player
 
     def choose_next_move(self):
+        logger = logging.get_logger("fireplace")
+        logger_before_state = logger.disabled
+        logger.disabled = True
+
         self._tree.selection()
 
         cards_to_choose = []
         cards_attack = {}
 
-        self._tree.display(self._root_id)
+        # self._tree.display(self._root_id)
 
         current_id = self._root_id
         while self._tree[current_id].player.name == self.player.name:
@@ -44,24 +49,8 @@ class MCTS:
             else:
                 break
 
-        # tmp solution - random just to check if other code works
-        # player = self._game.current_player
-        # sum = 0
-        # for card in player.hand:
-        #     if card.is_playable() and sum + card.cost <= player.mana and random.random() < 0.8:
-        #         cards_to_choose.append(card.uuid)
-        #         sum += card.cost
-        #
-        # for character in player.characters:
-        #     if character.can_attack():
-        #         target = random.choice(character.targets)
-        #         cards_attack[character.uuid] = target.uuid
-
+        logger.disabled = logger_before_state
         return cards_to_choose, cards_attack
-
-    def best_child(self):
-        # TODO: wybiera najlepsze dziecko z roota?
-        pass
 
 
 # def get_possible_choices_of_cards_from_hand(game: ".game.Game"):

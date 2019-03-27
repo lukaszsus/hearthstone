@@ -65,14 +65,12 @@ class MCTSNode:
         self.__children.append(identifier)
 
     def random_playout(self, tree):
-        # TODO: sprawdzić
         game = copy.deepcopy(self.game)
         _, winner = self._play_random_playout_from_state()
         self.game = game
         self.backpropagate(winner, tree)
 
     def backpropagate(self, winner, tree):
-        # TODO sprawdzić
         self.__num_playouts += 1
         if winner == self.player.name:
             self.__num_wins += 1
@@ -80,9 +78,6 @@ class MCTSNode:
             tree[self.parent].backpropagate(winner, tree)
 
     def expansion(self, tree):
-        logger = logging.get_logger("fireplace")
-        logger.disabled = True
-
         if self.next_node_type == NodeType.CHOOSE_CARD:
             # ruch związany z wyborem kart - kolejny będzie z atakiem
             self.add_nodes_with_all_possible_card_choices(tree)
@@ -97,8 +92,6 @@ class MCTSNode:
             tree.add_node(identifier=tree.id_gen.get_next(), game=game,
                           type=NodeType.CHOOSE_CARD, parent=self.identifier, chosen=None)
 
-        logger.disabled = False
-
     def add_nodes_with_all_possible_card_choices(self, tree):
         # wszystkie nowe nody - type NodeType.ATTACK
         for card_set in chain.from_iterable(combinations(self.player.hand, n) for n in range(len(self.player.hand) + 1)):
@@ -112,8 +105,8 @@ class MCTSNode:
 
     def add_nodes_with_all_possible_attacks(self, tree):
         # nowe nody - type NodeType.END_TURN
-        # losowo karta, która może atakować, bo może atakować tylko raz w kolejce
         num_attacks = 0
+        # TODO: sprawdzić, czy dodają się więcej niż jedne nody z atakami
         for character in self.player.characters:
             if character.type == CardType.MINION and character.can_attack():
                 num_attacks += 1
@@ -130,10 +123,6 @@ class MCTSNode:
                           type=NodeType.END_TURN, parent=self.identifier, chosen=None)
 
     def _play_random_playout_from_state(self) -> (".game.Game", ".player.Player"):
-        logger = logging.get_logger("fireplace")
-        logger.disabled = True
-        # stop printing logger messages for random playouts
-
         from simulator.game_utils import play_turn
         from simulator.strategies import Strategies
         game = self.__game
@@ -160,7 +149,6 @@ class MCTSNode:
                 winner = game.player2.name
                 # print("{} WINS! {} : {}".format(game.player2.name, game.player2.hero.health, game.player1.hero.health))
 
-        logger.disabled = False  # start printing logger messages
         return game, winner
 
     @game.setter

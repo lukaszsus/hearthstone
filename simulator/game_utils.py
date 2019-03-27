@@ -117,7 +117,7 @@ def shuffled_const_draft(card_indices):
 
     for card in minions:
         cls = cards.db[card]
-        if cls.cost > 10 or len(cls.powers) > 0:  # filter cards that are too expensive or have any powers
+        if cls.cost > 10 or cls.cost < 1 or len(cls.powers) > 0:  # filter cards that are too expensive or have any powers
             continue
         collection.append(cls)
 
@@ -214,7 +214,7 @@ def setup_game() -> ".game.Game":
     from simulator.player import Player
 
     # card_indices = [27, 48, 68, 159, 169, 180, 307, 386, 546, 588]  # randomly chosen 10 integers from [1,698]
-    card_indices = [random.randrange(1, 28) for i in range(10)]
+    card_indices = [random.randrange(1, 25) for i in range(10)]
 
     deck1 = shuffled_const_draft(card_indices)  # choose cards for Player1
     deck2 = shuffled_const_draft(card_indices)  # choose cards for Player2

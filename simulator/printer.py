@@ -31,15 +31,9 @@ def print_deck_content(player_name: str, deck: Deck):
 
 
 def print_attack(character, target):
-    log.info("### {}({},{},{}) attacks {}({},{},{})".format(str(character),
-                                                          character.atk,
-                                                          character.health,
-                                                          character.cost,
-                                                          str(target),
-                                                          target.atk,
-                                                          target.health,
-                                                          target.cost,
-                                                          ))
+    log.info("### {}({},{},{},{}) attacks {}({},{},{},{})".format(
+        str(character), character.atk, character.health, character.cost, character.controller.name,
+        str(target), target.atk, target.health, target.cost, target.controller.name))
 
 
 def print_main_phase_start():
@@ -52,8 +46,8 @@ def print_empty_line():
 
 
 def print_playing_card_on_target(card, target):
-    log.info("Playing %r on %r" % (card, target))
+    log.info("# %r playing %r on %r" % (card.controller.name, card, target))
 
 
 def print_choosing_card(choice):
-    log.info("Choosing card %r" % (choice))
+    log.info("# %r choosing card %r" % (choice.controller.name, choice))

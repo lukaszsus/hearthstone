@@ -18,14 +18,14 @@ from simulator.game_utils import setup_game, play_turn
 from simulator.strategies import Strategies
 
 
-def play_full_game() -> ".game.Game":
+def play_full_game(strategy_1=Strategies.RANDOM, strategy_2=Strategies.MCTS) -> ".game.Game":
     game = setup_game()
 
     for player in game.players:
         player.choice.choose()
 
-    game.player1.strategy = Strategies.AGGRESSIVE
-    game.player2.strategy = Strategies.MCTS
+    game.player1.strategy = strategy_1
+    game.player2.strategy = strategy_2
     try:
         printer.print_main_phase_start()
         while True:

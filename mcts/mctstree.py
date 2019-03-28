@@ -39,9 +39,11 @@ class MCTSTree:
     def display(self, identifier, depth=_ROOT):
         children = self[identifier].children
         if depth == _ROOT:
-            print("{0}({1}/{2})".format(identifier, self[identifier].num_wins, self[identifier].num_playouts))
+            print("{0}({1}/{2}, {3})".format(identifier, self[identifier].num_wins, self[identifier].num_playouts,
+                                             self[identifier].player.name))
         else:
-            print("\t"*depth, "{0}({1}/{2})".format(identifier, self[identifier].num_wins, self[identifier].num_playouts))
+            print("\t"*depth, "{0}({1}/{2}, {3})".format(identifier, self[identifier].num_wins, self[identifier].num_playouts,
+                                             self[identifier].player.name))
 
         depth += 1
         for child in children:
@@ -71,7 +73,7 @@ class MCTSTree:
         # TODO sprawdzić
         current_id = self.__root
         i = 0
-        while i < 100:  # TODO: warunek inny???
+        while i < 500:  # TODO: warunek inny???
             i += 1
             try:
                 unvisited_child = random.choice(self.get_unvisited(self[current_id].children))

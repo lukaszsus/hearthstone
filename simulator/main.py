@@ -28,9 +28,11 @@ if __name__ == "__main__":
     logger.disabled = True
 
     elapsed = []
+    num_games = 10
     strategy_1 = Strategies.RANDOM
     strategy_2 = Strategies.MCTS
-    for _ in range(10):
+
+    for _ in range(num_games):
         start = datetime.datetime.now()
         main(strategy_1, strategy_2)
         end = datetime.datetime.now()

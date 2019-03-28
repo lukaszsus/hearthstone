@@ -161,7 +161,7 @@ def attack_opponent_random(game: ".game.Game") -> ".game.Game":
     player = game.current_player
 
     for character in player.characters:
-        if character.can_attack():
+        if character.can_attack() and random.random() < 0.5:
             target = random.choice(character.targets)
             character.attack(target)
             print_attack(character, target)

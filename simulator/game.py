@@ -11,7 +11,7 @@ from pkgutil import iter_modules
 from typing import List
 from xml.etree import ElementTree
 
-from hearthstone.enums import CardClass, CardType
+from hearthstone.enums import CardClass, CardType, PlayState
 # Autogenerate the list of cardset modules
 from mcts.mctsnode import MCTSNode
 from simulator.game_utils import setup_game, play_turn
@@ -39,9 +39,11 @@ def play_full_game(strategy_1=Strategies.RANDOM, strategy_2=Strategies.MCTS) -> 
             printer.print_empty_line()
 
     except GameOver:
-        if game.player1.hero.health > game.player2.hero.health:
+        # if game.player1.hero.health > game.player2.hero.health:
+        print(game.player1.playstate, game.player1.hero.health, game.player2.playstate, game.player2.hero.health)
+        if game.player1.playstate == PlayState.WON:
             print("{} WINS! {} : {}".format(game.player1.name, game.player1.hero.health, game.player2.hero.health))
-        else:
+        elif game.player2.playstate == PlayState.WON:
             print("{} WINS! {} : {}".format(game.player2.name, game.player2.hero.health, game.player1.hero.health))
 
     return game

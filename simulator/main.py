@@ -32,10 +32,11 @@ if __name__ == "__main__":
     strategy_1 = Strategies.AGGRESSIVE
     strategy_2 = Strategies.CONTROLLING
 
-    for _ in range(num_games):
+    for i in range(num_games):
         start = datetime.datetime.now()
         main(strategy_1, strategy_2)
         end = datetime.datetime.now()
         elapsed.append(end - start)
+        print("{}. elapsed: {}".format(i, elapsed[i]))
 
     print(np.mean(elapsed))

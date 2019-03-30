@@ -12,7 +12,7 @@ from logging import basicConfig, WARNING, DEBUG
 
 from fireplace import logging
 from fireplace.exceptions import GameOver
-from hearthstone.enums import CardType
+from hearthstone.enums import CardType, PlayState
 
 from simulator import printer
 from simulator.strategies_greedy import choose_card_from_hand_defined, attack_opponent_defined
@@ -99,7 +99,7 @@ class MCTSNode:
             card_set = [c.uuid for c in card_set]
             if sum_cost <= self.player.mana:
                 game = copy.deepcopy(self.game)
-                choose_card_from_hand_defined(game, card_set)
+                game = choose_card_from_hand_defined(game, card_set)
                 tree.add_node(identifier=tree.id_gen.get_next(), game=game,
                               type=NodeType.ATTACK, parent=self.identifier, chosen={'cards': card_set})
 
@@ -112,7 +112,7 @@ class MCTSNode:
                 num_attacks += 1
                 for target in character.targets:
                     game = copy.deepcopy(self.game)
-                    attack_opponent_defined(game, {character.uuid : target.uuid})
+                    game = attack_opponent_defined(game, {character.uuid : target.uuid})
                     tree.add_node(identifier=tree.id_gen.get_next(), game=game,
                                   type=NodeType.ATTACK, parent=self.identifier,
                                   chosen={'attack': [character.uuid, target.uuid]})
@@ -142,10 +142,10 @@ class MCTSNode:
                 printer.print_empty_line()
 
         except GameOver:
-            if game.player1.hero.health > game.player2.hero.health:
+            if game.player1.playstate == PlayState.WON:
                 winner = game.player1.name
                 # print("{} WINS! {} : {}".format(game.player1.name, game.player1.hero.health, game.player2.hero.health))
-            else:
+            elif game.player2.playstate == PlayState.WON:
                 winner = game.player2.name
                 # print("{} WINS! {} : {}".format(game.player2.name, game.player2.hero.health, game.player1.hero.health))
 

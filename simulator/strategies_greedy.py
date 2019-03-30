@@ -144,6 +144,7 @@ def choose_card_from_hand_defined(game: ".game.Game", cards) -> ".game.Game":
                 choice = random.choice(player.choice.cards)
                 print_choosing_card(choice)
                 player.choice.choose(choice)
+    return game
 
 
 def attack_opponent_defined(game: ".game.Game", cards) -> ".game.Game":
@@ -155,6 +156,7 @@ def attack_opponent_defined(game: ".game.Game", cards) -> ".game.Game":
             if len(target) > 0:
                 character.attack(target[0])
                 print_attack(character, target[0])
+    return game
 
 
 def attack_opponent_random(game: ".game.Game") -> ".game.Game":

@@ -48,8 +48,6 @@ def play_full_game(strategy_1=Strategies.RANDOM, strategy_2=Strategies.MCTS, gam
             printer.print_empty_line()
 
     except GameOver:
-        if game.player1.hero.health != 0 and game.player2.hero.health != 0:
-            print(game.player1.playstate, game.player1.hero.health, game.player2.playstate, game.player2.hero.health)
         if game.player1.playstate == PlayState.WON:
             print("{} ({}) WINS! {} : {}".format(game.player1.name, game.player1.strategy.name, game.player1.hero.health, game.player2.hero.health))
         elif game.player2.playstate == PlayState.WON:

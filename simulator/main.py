@@ -11,16 +11,9 @@ from simulator.strategies import Strategies
 sys.path.append("..")
 
 
-def test_full_game(strategy_1, strategy_2, id, session_start):
-    try:
-        play_full_game(strategy_1, strategy_2, id, session_start)
-    except GameOver:
-        print("Game completed normally.")
-
-
 def main(strategy_1, strategy_2, id = -1, session_start = -1):
     cards.db.initialize() # inicjalizacja kart -> załadowanie wszystkich
-    test_full_game(strategy_1, strategy_2, id, session_start)
+    play_full_game(strategy_1, strategy_2, id, session_start)
 
 
 if __name__ == "__main__":
@@ -29,7 +22,7 @@ if __name__ == "__main__":
 
     elapsed = []
     session_start = datetime.datetime.now()
-    num_games = 20
+    num_games = 10
     strategy_1 = Strategies.CONTROLLING
     strategy_2 = Strategies.MCTS
 

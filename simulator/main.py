@@ -29,8 +29,8 @@ if __name__ == "__main__":
 
     elapsed = []
     num_games = 10
-    strategy_1 = Strategies.RANDOM
-    strategy_2 = Strategies.MCTS
+    strategy_1 = Strategies.AGGRESSIVE
+    strategy_2 = Strategies.CONTROLLING
 
     for _ in range(num_games):
         start = datetime.datetime.now()

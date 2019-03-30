@@ -73,7 +73,7 @@ class MCTSTree:
         # TODO sprawdzić
         current_id = self.__root
         i = 0
-        while i < 500:  # TODO: warunek inny???
+        while i < 100:  # TODO: warunek inny???
             i += 1
             try:
                 unvisited_child = random.choice(self.get_unvisited(self[current_id].children))
@@ -86,8 +86,18 @@ class MCTSTree:
                 max_ucts = 0
                 selected_child = None
                 if len(self[current_id].children) == 0:
-                    self[current_id].expansion(self)
+                    self[current_id].expansion(self)        # adding all possible node's children
                     continue
+
+                # selection (in the meaning of MCTS defined step)
+                # for child in self._get_all_nodes_identifiers(self.__root):
+                #     # TODO: check this ucts value, probably use something else for selection???
+                #     if self[child].num_playouts != 0:
+                #         ucts = self[child].num_wins / self[child].num_playouts + self.exploration_param * \
+                #                     np.sqrt(np.log(self[self.__root].num_playouts) / self[child].num_playouts)
+                #         if ucts >= max_ucts:
+                #             max_ucts = ucts
+                #             selected_child = child
                 for child in self[current_id].children:
                     # TODO: check this ucts value, probably use something else for selection???
                     ucts = self[child].num_wins / self[child].num_playouts + self.exploration_param * \
@@ -95,6 +105,7 @@ class MCTSTree:
                     if ucts >= max_ucts:
                         max_ucts = ucts
                         selected_child = child
+
                 current_id = selected_child
                 continue
 
@@ -104,6 +115,15 @@ class MCTSTree:
             if self[child].num_playouts == 0:
                 unvisited.append(child)
         return unvisited
+
+    def _get_all_nodes_identifiers(self, identifier):
+        nodes = list()
+        children = self[identifier].children
+        nodes.extend(children)
+        for child in children:
+            offsprings = self._get_all_nodes_identifiers(child)  # recursive call
+            nodes.extend(offsprings)
+        return nodes
 
 
 class IdGenerator:

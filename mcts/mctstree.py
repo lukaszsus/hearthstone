@@ -36,7 +36,10 @@ class MCTSTree:
 
         return node
 
-    def display(self, identifier, depth=_ROOT):
+    def display(self, identifier = None, depth=_ROOT):
+        if identifier is None:
+            identifier = self.__root
+
         children = self[identifier].children
         if depth == _ROOT:
             print("{0}({1}/{2}, {3})".format(identifier, self[identifier].num_wins, self[identifier].num_playouts,
@@ -90,7 +93,7 @@ class MCTSTree:
                     continue
 
                 # selection (in the meaning of MCTS defined step)
-                for child in self._get_all_nodes_identifiers(self.__root):
+                for child in self.get_all_nodes_identifiers(self.__root):
                     # TODO: check this ucts value, probably use something else for selection???
                     if self[child].num_playouts != 0:
                         ucts = self[child].num_wins / self[child].num_playouts + self.exploration_param * \
@@ -116,21 +119,23 @@ class MCTSTree:
                 unvisited.append(child)
         return unvisited
 
-    def _get_all_nodes_identifiers(self, identifier):
+    def get_all_nodes_identifiers(self, identifier=None):
+        if identifier is None:
+            identifier = self.__root
         nodes = list()
         if identifier == self.__root:
             nodes.append(identifier)
         children = self[identifier].children
         nodes.extend(children)
         for child in children:
-            offsprings = self._get_all_nodes_identifiers(child)  # recursive call
+            offsprings = self.get_all_nodes_identifiers(child)  # recursive call
             nodes.extend(offsprings)
         return nodes
 
     def get_lightweight_version(self):
         tree = MCTSTree()
 
-        nodes = self._get_all_nodes_identifiers(self.__root)
+        nodes = self.get_all_nodes_identifiers(self.__root)
         for node in nodes:
             x = self[node]
             tree.add_node(x.identifier, None, x.next_node_type, x.parent, None)

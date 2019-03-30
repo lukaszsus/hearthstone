@@ -9,12 +9,12 @@ from hearthstone.enums import Zone
 
 from mcts.mctsnode import MCTSNode, NodeType
 from mcts.mctstree import MCTSTree, IdGenerator
-from research.saver import parse_to_dir_name, parse_to_file_name, save_lightweight_tree_to_file, create_if_not_exists
+from research.saver import parse_to_dir_name, parse_to_file_name, save_lightweight_tree_to_file, create_if_not_exists, \
+    SAVE_PATH
 from simulator import printer
 
 
 class MCTS:
-    SAVE_PATH = '../trees/'
 
     def __init__(self, game, move_number):
         self._game = copy.deepcopy(game)
@@ -63,7 +63,7 @@ class MCTS:
         session_start = self._game.session_start
         dir_name = parse_to_dir_name(str(session_start))
         file_name = parse_to_file_name(self._game.id, self._move_number)
-        path = os.path.join(self.SAVE_PATH, dir_name)
+        path = os.path.join(SAVE_PATH, dir_name)
         create_if_not_exists(path)
         path = os.path.join(path, file_name)
         save_lightweight_tree_to_file(self._tree, path)

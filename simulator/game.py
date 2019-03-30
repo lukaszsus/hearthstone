@@ -18,27 +18,38 @@ from simulator.game_utils import setup_game, play_turn
 from simulator.strategies import Strategies
 
 
-def play_full_game(strategy_1=Strategies.RANDOM, strategy_2=Strategies.MCTS) -> "simulator.game.Game":
+def play_full_game(strategy_1=Strategies.RANDOM, strategy_2=Strategies.MCTS, game_id = -1, session_start = -1) -> "simulator.game.Game":
     game = setup_game()
+    game.id = game_id
+    game.session_start = session_start
 
     for player in game.players:
         player.choice.choose()
 
+    if game.player1.name == 'Player1' and game.player2.name == 'Player2':
+        game.player1.strategy = strategy_1
+        game.player2.strategy = strategy_2
+    elif game.player1.name == 'Player2' and game.player2.name == 'Player1':
+        game.player1.strategy = strategy_2
+        game.player2.strategy = strategy_1
+
     try:
         printer.print_main_phase_start()
+
+        move_number = 0
         while True:
             player = game.current_player
             if player.name == 'Player1':
-                play_turn(game, strategy_1)
+                play_turn(game, strategy_1, move_number)
 
             elif player.name == 'Player2':
-                play_turn(game, strategy_2)
-
+                play_turn(game, strategy_2, move_number)
+            move_number += 1
             printer.print_empty_line()
 
     except GameOver:
-        # if game.player1.hero.health > game.player2.hero.health:
-        print(game.player1.playstate, game.player1.hero.health, game.player2.playstate, game.player2.hero.health)
+        if game.player1.hero.health != 0 and game.player2.hero.health != 0:
+            print(game.player1.playstate, game.player1.hero.health, game.player2.playstate, game.player2.hero.health)
         if game.player1.playstate == PlayState.WON:
             print("{} ({}) WINS! {} : {}".format(game.player1.name, game.player1.strategy.name, game.player1.hero.health, game.player2.hero.health))
         elif game.player2.playstate == PlayState.WON:

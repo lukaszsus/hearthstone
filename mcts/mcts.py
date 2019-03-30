@@ -1,5 +1,7 @@
 import copy
+import os
 import random
+import re
 from itertools import chain, combinations, combinations_with_replacement, permutations
 
 from fireplace import logging
@@ -7,12 +9,16 @@ from hearthstone.enums import Zone
 
 from mcts.mctsnode import MCTSNode, NodeType
 from mcts.mctstree import MCTSTree, IdGenerator
+from research.saver import parse_to_dir_name, parse_to_file_name, save_lightweight_tree_to_file, create_if_not_exists
 from simulator import printer
 
 
 class MCTS:
-    def __init__(self, game):
+    SAVE_PATH = '../trees/'
+
+    def __init__(self, game, move_number):
         self._game = copy.deepcopy(game)
+        self._move_number = move_number
         self._tree = MCTSTree()
         self._root_id = self._tree.id_gen.get_next()
         self._tree.add_node(self._root_id, game=copy.deepcopy(self._game), type=NodeType.CHOOSE_CARD)     # root initialized
@@ -49,8 +55,18 @@ class MCTS:
             else:
                 break
 
+        self._save_tree()
         logger.disabled = logger_before_state
         return cards_to_choose, cards_attack
+
+    def _save_tree(self):
+        session_start = self._game.session_start
+        dir_name = parse_to_dir_name(str(session_start))
+        file_name = parse_to_file_name(self._game.id, self._move_number)
+        path = os.path.join(self.SAVE_PATH, dir_name)
+        create_if_not_exists(path)
+        path = os.path.join(path, file_name)
+        save_lightweight_tree_to_file(self._tree, path)
 
 
 # def get_possible_choices_of_cards_from_hand(game: ".game.Game"):

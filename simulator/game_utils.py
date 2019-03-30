@@ -234,7 +234,7 @@ def setup_game() -> ".game.Game":
     return game
 
 
-def play_turn(game: ".game.Game", strategy: int=None) -> ".game.Game":
+def play_turn(game: ".game.Game", strategy: int=None, move_number = -1) -> ".game.Game":
     for player in game.players:
         printer.print_player_cards(player)
 
@@ -249,7 +249,7 @@ def play_turn(game: ".game.Game", strategy: int=None) -> ".game.Game":
         if character.type == CardType.SPELL:
             player.hand.remove(character)
 
-    play_turn_using_strategy(game, strategy)
+    play_turn_using_strategy(game, strategy, move_number)
 
     game.end_turn()
     return game

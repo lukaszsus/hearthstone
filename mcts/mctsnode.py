@@ -33,7 +33,8 @@ class MCTSNode:
         self.__game = copy.deepcopy(game)
         self.__children = []
         self.__parent = None
-        self.player = game.current_player
+        if game is not None:
+            self.player = game.current_player
         self.next_node_type = type
         self.chosen = chosen
 
@@ -56,6 +57,10 @@ class MCTSNode:
     @property
     def game(self):
         return self.__game
+
+    @game.setter
+    def game(self, value):
+        self.__game = value
 
     @property
     def parent(self):

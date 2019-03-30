@@ -73,7 +73,7 @@ class MCTSTree:
         # TODO sprawdzić
         current_id = self.__root
         i = 0
-        while i < 100:  # TODO: warunek inny???
+        while i < 250:  # TODO: warunek inny???
             i += 1
             try:
                 unvisited_child = random.choice(self.get_unvisited(self[current_id].children))
@@ -90,21 +90,21 @@ class MCTSTree:
                     continue
 
                 # selection (in the meaning of MCTS defined step)
-                # for child in self._get_all_nodes_identifiers(self.__root):
-                #     # TODO: check this ucts value, probably use something else for selection???
-                #     if self[child].num_playouts != 0:
-                #         ucts = self[child].num_wins / self[child].num_playouts + self.exploration_param * \
-                #                     np.sqrt(np.log(self[self.__root].num_playouts) / self[child].num_playouts)
-                #         if ucts >= max_ucts:
-                #             max_ucts = ucts
-                #             selected_child = child
-                for child in self[current_id].children:
+                for child in self._get_all_nodes_identifiers(self.__root):
                     # TODO: check this ucts value, probably use something else for selection???
-                    ucts = self[child].num_wins / self[child].num_playouts + self.exploration_param * \
-                           np.sqrt(np.log(self[self.__root].num_playouts) / self[child].num_playouts)
-                    if ucts >= max_ucts:
-                        max_ucts = ucts
-                        selected_child = child
+                    if self[child].num_playouts != 0:
+                        ucts = self[child].num_wins / self[child].num_playouts + self.exploration_param * \
+                                    np.sqrt(np.log(self[self.__root].num_playouts) / self[child].num_playouts)
+                        if ucts >= max_ucts:
+                            max_ucts = ucts
+                            selected_child = child
+                # for child in self[current_id].children:
+                #     # TODO: check this ucts value, probably use something else for selection???
+                #     ucts = self[child].num_wins / self[child].num_playouts + self.exploration_param * \
+                #            np.sqrt(np.log(self[self.__root].num_playouts) / self[child].num_playouts)
+                #     if ucts >= max_ucts:
+                #         max_ucts = ucts
+                #         selected_child = child
 
                 current_id = selected_child
                 continue
@@ -118,12 +118,27 @@ class MCTSTree:
 
     def _get_all_nodes_identifiers(self, identifier):
         nodes = list()
+        if identifier == self.__root:
+            nodes.append(identifier)
         children = self[identifier].children
         nodes.extend(children)
         for child in children:
             offsprings = self._get_all_nodes_identifiers(child)  # recursive call
             nodes.extend(offsprings)
         return nodes
+
+    def get_lightweight_version(self):
+        tree = MCTSTree()
+
+        nodes = self._get_all_nodes_identifiers(self.__root)
+        for node in nodes:
+            x = self[node]
+            tree.add_node(x.identifier, None, x.next_node_type, x.parent, None)
+            tree[node].player = PlayerMock(x.player.name)
+            tree[node]._MCTSNode__num_wins = x._MCTSNode__num_wins
+            tree[node]._MCTSNode__num_playouts = x._MCTSNode__num_playouts
+
+        return tree
 
 
 class IdGenerator:
@@ -134,3 +149,8 @@ class IdGenerator:
         to_ret = self.__next_id
         self.__next_id += 1
         return to_ret
+
+
+class PlayerMock:
+    def __init__(self, name):
+        self.name = name

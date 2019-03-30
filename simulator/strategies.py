@@ -14,7 +14,7 @@ class Strategies(IntEnum):
     MCTS = 3
 
 
-def play_turn_using_strategy(game: ".game.Game", strategy):
+def play_turn_using_strategy(game: ".game.Game", strategy, move_number):
     if strategy == Strategies.RANDOM:
         random_agent(game)
     elif strategy == Strategies.AGGRESSIVE:
@@ -22,7 +22,7 @@ def play_turn_using_strategy(game: ".game.Game", strategy):
     elif strategy == Strategies.CONTROLLING:
         controlling_agent(game)
     elif strategy == Strategies.MCTS:
-        mcts_agent(game)
+        mcts_agent(game, move_number)
 
 
 def random_agent(game: ".game.Game") -> ".game.Game":
@@ -40,8 +40,8 @@ def controlling_agent(game: ".game.Game") -> ".game.Game":
     attack_opponent(game, AttackOpponent.CONTROLLING)
 
 
-def mcts_agent(game: ".game.Game") -> ".game.Game":
-    mcts = MCTS(game)
+def mcts_agent(game: ".game.Game", move_number) -> ".game.Game":
+    mcts = MCTS(game, move_number)
     cards_to_choose, cards_attack = mcts.choose_next_move()
     choose_card_from_hand(game, ChooseCard.DEFINED_CARDS, cards_to_choose)
     attack_opponent(game, AttackOpponent.DEFINED_CARDS, cards_attack)

@@ -106,6 +106,9 @@ def shuffled_const_draft(card_indices):
     from fireplace import cards
     from .deck import Deck
 
+    chosen_cards = ['CS2_168', 'CS2_120', 'GVG_064', 'AT_092', 'CS2_119',
+                    'AT_101', 'CS2_200', 'CS2_186', 'OG_142', 'OG_141']
+
     deck = []
     collection = []
 
@@ -119,12 +122,14 @@ def shuffled_const_draft(card_indices):
         cls = cards.db[card]
         if cls.cost > 10 or cls.cost < 1 or len(cls.powers) > 0:  # filter cards that are too expensive or have any powers
             continue
+        if cls.card_id not in chosen_cards:
+            continue
         collection.append(cls)
 
-    collection[:] = [collection[i] for i in card_indices]
+    # collection[:] = [collection[i] for i in card_indices]
 
-    if len(collection) > Deck.MAX_CARDS/2:
-        raise Exception("Too many cards chosen for deck.")
+    if len(collection) != Deck.MAX_CARDS/2:
+        raise Exception("Wrong number of cards chosen for deck.")
 
     for card in collection:
         deck.append(card.id)
@@ -214,10 +219,10 @@ def setup_game() -> ".game.Game":
     from simulator.player import Player
 
     # card_indices = [27, 48, 68, 159, 169, 180, 307, 386, 546, 588]  # randomly chosen 10 integers from [1,698]
-    card_indices = [random.randrange(1, 25) for i in range(10)]
+    # card_indices = [random.randrange(1, 25) for i in range(10)]
 
-    deck1 = shuffled_const_draft(card_indices)  # choose cards for Player1
-    deck2 = shuffled_const_draft(card_indices)  # choose cards for Player2
+    deck1 = shuffled_const_draft([])  # choose cards for Player1
+    deck2 = shuffled_const_draft([])  # choose cards for Player2
 
     printer.print_deck_content("Player1", deck1)
     printer.print_deck_content("Player2", deck2)

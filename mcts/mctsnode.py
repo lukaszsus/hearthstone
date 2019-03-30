@@ -23,6 +23,7 @@ class NodeType(IntEnum):
     CHOOSE_CARD = 1
     ATTACK = 2
     END_TURN = 3
+    END_GAME = 4
 
 
 class MCTSNode:
@@ -96,6 +97,9 @@ class MCTSNode:
             game.end_turn()
             tree.add_node(identifier=tree.id_gen.get_next(), game=game,
                           type=NodeType.CHOOSE_CARD, parent=self.identifier, chosen=None)
+        elif self.next_node_type == NodeType.END_GAME:
+            # gra się skończyła, nie ma możliwości posiadania dzieci
+            return
 
     def add_nodes_with_all_possible_card_choices(self, tree):
         # wszystkie nowe nody - type NodeType.ATTACK
@@ -117,10 +121,21 @@ class MCTSNode:
                 num_attacks += 1
                 for target in character.targets:
                     game = copy.deepcopy(self.game)
-                    game = attack_opponent_defined(game, {character.uuid : target.uuid})
-                    tree.add_node(identifier=tree.id_gen.get_next(), game=game,
-                                  type=NodeType.ATTACK, parent=self.identifier,
-                                  chosen={'attack': [character.uuid, target.uuid]})
+                    try:
+                        game = attack_opponent_defined(game, {character.uuid : target.uuid})
+                        tree.add_node(identifier=tree.id_gen.get_next(), game=game,
+                                      type=NodeType.ATTACK, parent=self.identifier,
+                                      chosen={'attack': [character.uuid, target.uuid]})
+                    except GameOver:
+                        # wygrał ten, który teraz wykonuje ruch - innej opcji nie ma :)
+                        id = tree.id_gen.get_next()  # id dziecka
+                        tree.add_node(identifier=id, game=None,
+                                      type=NodeType.END_GAME, parent=self.identifier,
+                                      chosen={'attack': [character.uuid, target.uuid]})
+                        tree[id].num_wins = 1
+                        tree[id].num_playouts = 1
+                        tree[id].player = self.player
+                        self.backpropagate(winner=self.player.name, tree=tree)
                 break
         if num_attacks == 0:
             game = copy.deepcopy(self.game)
@@ -163,3 +178,11 @@ class MCTSNode:
     @parent.setter
     def parent(self, value):
         self.__parent = value
+
+    @num_wins.setter
+    def num_wins(self, value):
+        self.__num_wins = value
+
+    @num_playouts.setter
+    def num_playouts(self, value):
+        self.__num_playouts = value

@@ -75,12 +75,13 @@ class MCTSTree:
         i = 0
         while i < 250:  # TODO: warunek inny???
             i += 1
-            try:
-                unvisited_child = random.choice(self.get_unvisited(self[current_id].children))
+            unvisited_children = self.get_unvisited(self[current_id].children)
+            if len(unvisited_children) > 0:
+                unvisited_child = random.choice(unvisited_children)
                 self[unvisited_child].random_playout(self)
                 current_id = self.__root
                 continue
-            except IndexError:
+            else:
                 # when selected_child is None, because get_unvisited is empty
                 # which means all children nodes were visited - we have to select one of them!
                 max_ucts = 0

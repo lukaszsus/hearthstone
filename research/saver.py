@@ -5,8 +5,7 @@ import pickle
 import re
 
 
-SAVE_PATH = '../trees/'
-DIR_NAME = '2019-03-30-184125'
+SAVE_PATH = '../outcomes_to_process/'
 
 
 def create_if_not_exists(path):

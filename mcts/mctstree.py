@@ -7,6 +7,8 @@ import numpy as np
 
 from mcts.mctsnode import MCTSNode, NodeType
 
+MCTS_MAX_TIME = 1000
+MCTS_MAX_TIMES = [1000, 500, 250, 100]
 (_ROOT, _DEPTH, _BREADTH) = range(3)
 
 
@@ -76,7 +78,7 @@ class MCTSTree:
         # TODO sprawdzić
         current_id = self.__root
         i = 0
-        while i < 250:  # TODO: warunek inny???
+        while i < MCTS_MAX_TIME:  # TODO: warunek inny???
             i += 1
             unvisited_children = self.get_unvisited(self[current_id].children)
             if len(unvisited_children) > 0:

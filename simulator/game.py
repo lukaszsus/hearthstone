@@ -18,7 +18,7 @@ from simulator.game_utils import setup_game, play_turn
 from simulator.strategies import Strategies
 
 
-def play_full_game(strategy_1=Strategies.RANDOM, strategy_2=Strategies.MCTS, game_id = -1, session_start = -1) -> "simulator.game.Game":
+def play_full_game(strategy_1=Strategies.RANDOM, strategy_2=Strategies.MCTS, game_id = -1, session_start = -1):
     game = setup_game()
     game.id = game_id
     game.session_start = session_start
@@ -48,9 +48,12 @@ def play_full_game(strategy_1=Strategies.RANDOM, strategy_2=Strategies.MCTS, gam
             printer.print_empty_line()
 
     except GameOver:
+        winner = None
         if game.player1.playstate == PlayState.WON:
             print("{} ({}) WINS! {} : {}".format(game.player1.name, game.player1.strategy.name, game.player1.hero.health, game.player2.hero.health))
+            winner = game.player1.name
         elif game.player2.playstate == PlayState.WON:
             print("{} ({}) WINS! {} : {}".format(game.player2.name, game.player2.strategy.name, game.player2.hero.health, game.player1.hero.health))
+            winner = game.player2.name
 
-    return game
+    return game, winner

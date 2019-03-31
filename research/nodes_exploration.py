@@ -1,11 +1,12 @@
 import os
+import re
 
 import dill
 import pandas as pd
 
 import mcts
 from research.leaves import get_game_move_id
-from research.saver import SAVE_PATH, create_if_not_exists, DIR_NAME
+from research.saver import SAVE_PATH, create_if_not_exists
 
 
 def count_tree_expl_rate(tree: mcts.mctstree) -> float:
@@ -47,20 +48,23 @@ def save_to_csv(dir_name, means):
 
 
 if __name__ == '__main__':
-    path = os.path.join(SAVE_PATH, DIR_NAME)
+    for dir_name in os.listdir(SAVE_PATH):
+        if re.search(".*_summary", dir_name):
+            continue
+        path = os.path.join(SAVE_PATH, dir_name)
 
-    expl_rates = {}
+        expl_rates = {}
 
-    for file_name in os.listdir(path):
-        game_id, move_id = get_game_move_id(file_name)
-        file_path = os.path.join(path, file_name)
-        with open(file_path, 'rb') as f:
-            tree = dill.load(f)
+        for file_name in os.listdir(path):
+            game_id, move_id = get_game_move_id(file_name)
+            file_path = os.path.join(path, file_name)
+            with open(file_path, 'rb') as f:
+                tree = dill.load(f)
 
-            if game_id not in expl_rates:
-                expl_rates[game_id] = {move_id: count_tree_expl_rate(tree)}
-            else:
-                expl_rates[game_id][move_id] = count_tree_expl_rate(tree)
+                if game_id not in expl_rates:
+                    expl_rates[game_id] = {move_id: count_tree_expl_rate(tree)}
+                else:
+                    expl_rates[game_id][move_id] = count_tree_expl_rate(tree)
 
-            print("{} {}".format(str(game_id), str(move_id)))
-    save_to_csv(DIR_NAME + "_summary", expl_rates)
+                print("{} {}".format(str(game_id), str(move_id)))
+        save_to_csv(dir_name + "_summary", expl_rates)

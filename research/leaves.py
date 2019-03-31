@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from mcts import mctstree
-from research.saver import SAVE_PATH, create_if_not_exists, DIR_NAME
+from research.saver import SAVE_PATH, create_if_not_exists
 
 
 def get_game_move_id(file_name):
@@ -56,33 +56,36 @@ def save_to_csv(dir_name, means, medians, maxes):
 
 
 if __name__ == '__main__':
-    path = os.path.join(SAVE_PATH, DIR_NAME)
+    for dir_name in os.listdir(SAVE_PATH):
+        if re.search(".*_summary", dir_name):
+            continue
+        path = os.path.join(SAVE_PATH, dir_name)
 
-    means = {}
-    medians = {}
-    maxes = {}
+        means = {}
+        medians = {}
+        maxes = {}
 
-    for file_name in os.listdir(path):
-        game_id, move_id = get_game_move_id(file_name)
-        file_path = os.path.join(path, file_name)
-        with open(file_path, 'rb') as f:
-            tree = dill.load(f)
-            depths = np.asarray(count_depths(tree))
-            mean = depths.mean()
-            median = np.median(depths)
-            max_ = depths.max()
+        for file_name in os.listdir(path):
+            game_id, move_id = get_game_move_id(file_name)
+            file_path = os.path.join(path, file_name)
+            with open(file_path, 'rb') as f:
+                tree = dill.load(f)
+                depths = np.asarray(count_depths(tree))
+                mean = depths.mean()
+                median = np.median(depths)
+                max_ = depths.max()
 
-            if game_id not in means:
-                means[game_id] = {move_id: mean}
-            else:
-                means[game_id][move_id] = mean
-            if game_id not in medians:
-                medians[game_id] = {move_id: median}
-            else:
-                medians[game_id][move_id] = median
-            if game_id not in maxes:
-                maxes[game_id] = {move_id: max_}
-            else:
-                maxes[game_id][move_id] = max_
-            print("{} {}".format(str(game_id), str(move_id)))
-    save_to_csv(DIR_NAME + "_summary", means, medians, maxes)
+                if game_id not in means:
+                    means[game_id] = {move_id: mean}
+                else:
+                    means[game_id][move_id] = mean
+                if game_id not in medians:
+                    medians[game_id] = {move_id: median}
+                else:
+                    medians[game_id][move_id] = median
+                if game_id not in maxes:
+                    maxes[game_id] = {move_id: max_}
+                else:
+                    maxes[game_id][move_id] = max_
+                print("{} {}".format(str(game_id), str(move_id)))
+        save_to_csv(dir_name + "_summary", means, medians, maxes)

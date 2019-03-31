@@ -1,10 +1,12 @@
 import os
+import re
+
 import dill
 import pandas as pd
 
 import mcts
 from research.leaves import get_game_move_id
-from research.saver import SAVE_PATH, DIR_NAME, create_if_not_exists
+from research.saver import SAVE_PATH, create_if_not_exists
 
 
 def count_playouts(tree: mcts.mctstree):
@@ -35,24 +37,27 @@ def save_to_csv(dir_name, num_playouts, mean_num_playouts_per_node):
 
 
 if __name__ == '__main__':
-    path = os.path.join(SAVE_PATH, DIR_NAME)
+    for dir_name in os.listdir(SAVE_PATH):
+        if re.search(".*_summary", dir_name):
+            continue
+        path = os.path.join(SAVE_PATH, dir_name)
 
-    num_playouts = {}
-    num_playouts_per_node = {}
+        num_playouts = {}
+        num_playouts_per_node = {}
 
-    for file_name in os.listdir(path):
-        game_id, move_id = get_game_move_id(file_name)
-        file_path = os.path.join(path, file_name)
-        with open(file_path, 'rb') as f:
-            tree = dill.load(f)
-            num, mean = count_playouts(tree)
+        for file_name in os.listdir(path):
+            game_id, move_id = get_game_move_id(file_name)
+            file_path = os.path.join(path, file_name)
+            with open(file_path, 'rb') as f:
+                tree = dill.load(f)
+                num, mean = count_playouts(tree)
 
-            if game_id not in num_playouts_per_node:
-                num_playouts_per_node[game_id] = {move_id: mean}
-                num_playouts[game_id] = {move_id: num}
-            else:
-                num_playouts_per_node[game_id][move_id] = mean
-                num_playouts[game_id][move_id] = num
+                if game_id not in num_playouts_per_node:
+                    num_playouts_per_node[game_id] = {move_id: mean}
+                    num_playouts[game_id] = {move_id: num}
+                else:
+                    num_playouts_per_node[game_id][move_id] = mean
+                    num_playouts[game_id][move_id] = num
 
-            print("{} {}".format(str(game_id), str(move_id)))
-    save_to_csv(DIR_NAME + "_summary", num_playouts, num_playouts_per_node)
+                print("{} {}".format(str(game_id), str(move_id)))
+        save_to_csv(dir_name + "_summary", num_playouts, num_playouts_per_node)

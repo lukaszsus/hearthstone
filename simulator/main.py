@@ -63,10 +63,7 @@ def make_research():
             print(np.mean(elapsed))
 
 
-def make_short_game():
-    num_games = 10
-    strategy_1 = Strategies.AGGRESSIVE
-    strategy_2 = Strategies.MCTS
+def make_short_game(num_games=10, strategy_1=Strategies.AGGRESSIVE, strategy_2=Strategies.MCTS):
     session_start = datetime.datetime.now()
     elapsed = []
     for i in range(num_games):

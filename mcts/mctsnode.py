@@ -76,12 +76,12 @@ class MCTSNode:
         self.game = game
         self.backpropagate(winner, tree)
 
-    def backpropagate(self, winner, tree):
+    def backpropagate(self, winner_name, tree):
         self.__num_playouts += 1
-        if winner == self.player.name:
+        if winner_name == self.player.name:
             self.__num_wins += 1
         if self.parent is not None:
-            tree[self.parent].backpropagate(winner, tree)
+            tree[self.parent].backpropagate(winner_name, tree)
 
     def expansion(self, tree):
         if self.next_node_type == NodeType.CHOOSE_CARD:
@@ -98,7 +98,8 @@ class MCTSNode:
             tree.add_node(identifier=tree.id_gen.get_next(), game=game,
                           type=NodeType.CHOOSE_CARD, parent=self.identifier, chosen=None)
         elif self.next_node_type == NodeType.END_GAME:
-            # gra się skończyła, nie ma możliwości posiadania dzieci
+            # gra się skończyła, nie ma możliwości posiadania dzieci - backpropagacja tego wyniku
+            self.backpropagate(self.player.name, tree)
             return
 
     def add_nodes_with_all_possible_card_choices(self, tree):
@@ -135,7 +136,7 @@ class MCTSNode:
                         tree[id].num_wins = 1
                         tree[id].num_playouts = 1
                         tree[id].player = self.player
-                        self.backpropagate(winner=self.player.name, tree=tree)
+                        self.backpropagate(winner_name=self.player.name, tree=tree)
                 break
         if num_attacks == 0:
             game = copy.deepcopy(self.game)

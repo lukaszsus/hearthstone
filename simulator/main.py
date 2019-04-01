@@ -36,7 +36,7 @@ def make_research():
     columns = ["Player1_strategy", "Player1_wins", "Player2_wins", "Player2_strategy", "mcts_time", "mean_time_per_game"]
     outcomes = pd.DataFrame(columns=columns)
 
-    num_games = 10
+    num_games = 100
 
     strategies_to_test = [Strategies.AGGRESSIVE, Strategies.CONTROLLING, Strategies.RANDOM]
     strategy_2 = Strategies.MCTS

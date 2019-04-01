@@ -7,8 +7,8 @@ import numpy as np
 
 from mcts.mctsnode import MCTSNode, NodeType
 
-MCTS_MAX_TIME = 10000
-MCTS_MAX_TIMES = [10000] # , 1000, 500, 250, 100]
+MCTS_MAX_TIME = 1000
+MCTS_MAX_TIMES = [1000, 500, 250, 100]
 (_ROOT, _DEPTH, _BREADTH) = range(3)
 
 
@@ -99,7 +99,7 @@ class MCTSTree:
                 # for child in self.get_all_nodes_identifiers(self.__root):
                 #     # TODO: check this ucts value, probably use something else for selection???
                 #     if self[child].num_playouts != 0:
-                #         ucts = self[child].num_wins / self[child].num_playouts + self.exploration_param * \
+                #         ucts = self[child].plot_num_wins / self[child].num_playouts + self.exploration_param * \
                 #                     np.sqrt(np.log(self[self.__root].num_playouts) / self[child].num_playouts)
                 #         if ucts >= max_ucts:
                 #             max_ucts = ucts

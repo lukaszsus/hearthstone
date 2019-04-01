@@ -96,21 +96,21 @@ class MCTSTree:
                     continue
 
                 # selection (in the meaning of MCTS defined step)
-                for child in self.get_all_nodes_identifiers(self.__root):
-                    # TODO: check this ucts value, probably use something else for selection???
-                    if self[child].num_playouts != 0:
-                        ucts = self[child].num_wins / self[child].num_playouts + self.exploration_param * \
-                                    np.sqrt(np.log(self[self.__root].num_playouts) / self[child].num_playouts)
-                        if ucts >= max_ucts:
-                            max_ucts = ucts
-                            selected_child = child
-                # for child in self[current_id].children:
+                # for child in self.get_all_nodes_identifiers(self.__root):
                 #     # TODO: check this ucts value, probably use something else for selection???
-                #     ucts = self[child].num_wins / self[child].num_playouts + self.exploration_param * \
-                #            np.sqrt(np.log(self[self.__root].num_playouts) / self[child].num_playouts)
-                #     if ucts >= max_ucts:
-                #         max_ucts = ucts
-                #         selected_child = child
+                #     if self[child].num_playouts != 0:
+                #         ucts = self[child].num_wins / self[child].num_playouts + self.exploration_param * \
+                #                     np.sqrt(np.log(self[self.__root].num_playouts) / self[child].num_playouts)
+                #         if ucts >= max_ucts:
+                #             max_ucts = ucts
+                #             selected_child = child
+                for child in self[current_id].children:
+                    # TODO: check this ucts value, probably use something else for selection???
+                    ucts = self[child].num_wins / self[child].num_playouts + self.exploration_param * \
+                           np.sqrt(np.log(self[self.__root].num_playouts) / self[child].num_playouts)
+                    if ucts >= max_ucts:
+                        max_ucts = ucts
+                        selected_child = child
 
                 current_id = selected_child
                 continue

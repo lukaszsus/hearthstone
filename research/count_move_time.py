@@ -38,7 +38,7 @@ def save_to_csv(dir_path, means):
 
 
 if __name__ == '__main__':
-    session_name  ="session_10000"
+    session_name  ="session_20190402_dodatkowy_backpropagate"
     base_path = os.path.join('../outcomes/', session_name)
     means = list()
     last_dir_name = None

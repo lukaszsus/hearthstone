@@ -55,7 +55,7 @@ class MCTS:
             else:
                 break
 
-        # self._save_tree()
+        self._save_tree()
         logger.disabled = logger_before_state
         return cards_to_choose, cards_attack
 

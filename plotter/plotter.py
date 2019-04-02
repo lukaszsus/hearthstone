@@ -5,8 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-SRC_DIR = '../outcomes_summaries/session_20190331_20190401/'
-SRC_LAST_DIR = '../outcomes_summaries/session_20190331_20190401/2019-04-01-051650_summary/'
+SRC_DIR = '../outcomes_summaries/session_20190402_dodatkowy_backpropagate/'
+SRC_LAST_DIR = '../outcomes_summaries/session_20190402_dodatkowy_backpropagate/2019-04-02-201635_summary/'
 DST_DIR = '../plots/'
 
 def plot_num_wins():
@@ -134,9 +134,9 @@ def plot_max_depths():
 
 
 if __name__ == '__main__':
-    # plot_num_wins()
-    # plot_playouts()
-    # plot_mean_depths()
-    # plot_median_depths()
-    # plot_max_depths()
+    plot_num_wins()
+    plot_playouts()
+    plot_mean_depths()
+    plot_median_depths()
     plot_max_depths()
+    # plot_max_depths()

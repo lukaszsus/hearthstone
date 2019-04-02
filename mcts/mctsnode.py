@@ -17,6 +17,7 @@ from hearthstone.enums import CardType, PlayState
 from simulator import printer
 from simulator.strategies_greedy import choose_card_from_hand_defined, attack_opponent_defined
 
+USE_RANDOM_PLAYOUT = True
 
 class NodeType(IntEnum):
     NONE = 0
@@ -148,8 +149,17 @@ class MCTSNode:
         from simulator.strategies import Strategies
         game = self.__game
         winner = None
-        player1_strategy = Strategies.RANDOM
-        player2_strategy = Strategies.RANDOM
+
+        player1_strategy = game.player1.strategy
+        player2_strategy = game.player2.strategy
+        if USE_RANDOM_PLAYOUT:
+            player1_strategy = Strategies.RANDOM
+            player2_strategy = Strategies.RANDOM
+        else:
+            if player1_strategy == Strategies.MCTS:
+                player1_strategy = Strategies.RANDOM
+            elif player2_strategy == Strategies.MCTS:
+                player2_strategy = Strategies.RANDOM
 
         try:
             while True:

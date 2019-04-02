@@ -139,4 +139,4 @@ if __name__ == '__main__':
     plot_mean_depths()
     plot_median_depths()
     plot_max_depths()
-    # plot_max_depths()
+    plot_max_depths()

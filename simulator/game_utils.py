@@ -118,14 +118,13 @@ def shuffled_const_draft(card_indices):
 
     minions = cards.filter(
             collectible=True,
-            type=CardType.MINION,
-            card_class=CardClass.NEUTRAL,
+            type=CardType.MINION
     )
 
     for card in minions:
         cls = cards.db[card]
-        if cls.cost > 10 or cls.cost < 1 or len(cls.powers) > 0:  # filter cards that are too expensive or have any powers
-            continue
+        # if cls.cost > 10 or cls.cost < 1 or len(cls.powers) > 0:  # filter cards that are too expensive or have any powers
+        #     continue
         if cls.card_id not in chosen_cards:
             continue
         collection.append(cls)

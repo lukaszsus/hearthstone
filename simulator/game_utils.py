@@ -106,8 +106,12 @@ def shuffled_const_draft(card_indices):
     from fireplace import cards
     from .deck import Deck
 
-    chosen_cards = ['CS2_168', 'CS2_120', 'GVG_064', 'AT_092', 'CS2_119',
-                    'AT_101', 'CS2_200', 'CS2_186', 'OG_142', 'OG_141']
+    # normal cards:
+    # chosen_cards = ['CS2_168', 'CS2_120', 'GVG_064', 'AT_092', 'CS2_119',
+    #                 'AT_101', 'CS2_200', 'CS2_186', 'OG_142', 'OG_141']
+    # cards with powers:
+    chosen_cards = ['EX1_029', 'EX1_506', 'EX1_015', 'CS2_122', 'EX1_020',
+                    'CS2_124', 'CS2_179', 'EX1_399', 'EX1_583', 'CS2_161']
 
     deck = []
     collection = []

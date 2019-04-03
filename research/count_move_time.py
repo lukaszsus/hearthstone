@@ -2,12 +2,10 @@ import datetime
 import os
 import re
 
-import dill
 import numpy as np
 import pandas as pd
 
 from research.leaves import get_game_move_id
-from research.saver import SAVE_PATH, create_if_not_exists
 
 
 def convert_str_to_date(str_time):
@@ -38,7 +36,7 @@ def save_to_csv(dir_path, means):
 
 
 if __name__ == '__main__':
-    session_name  ="session_20190402_dodatkowy_backpropagate"
+    session_name  ="session_20190403_zmieniony_playout"
     base_path = os.path.join('../outcomes/', session_name)
     means = list()
     last_dir_name = None

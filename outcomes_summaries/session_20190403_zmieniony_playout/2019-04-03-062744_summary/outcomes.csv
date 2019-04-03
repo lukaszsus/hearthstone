@@ -1,0 +1,3 @@
+Player1_strategy,Player1_wins,Player2_wins,Player2_strategy,mcts_time,mean_time_per_game
+CONTROLLING,88,12,MCTS,500,0 days 00:00:42.103762000
+RANDOM,2,98,MCTS,500,0 days 00:01:00.075482000

@@ -1,0 +1,4 @@
+Player1_strategy,Player1_wins,Player2_wins,Player2_strategy,mcts_time,mean_time_per_game
+AGGRESSIVE,91,9,MCTS,1000,0 days 00:00:42.501106000
+CONTROLLING,82,18,MCTS,1000,0 days 00:01:16.787950000
+RANDOM,2,98,MCTS,1000,0 days 00:01:24.474836000

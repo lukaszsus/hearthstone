@@ -5,8 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-SRC_DIR = '../outcomes_summaries/session_20190403_zmieniony_playout/'
-SRC_LAST_DIR = '../outcomes_summaries/session_20190403_zmieniony_playout/2019-04-03-084635_summary/'
+SRC_DIR = '../outcomes_summaries/magiczne_karty/'
+SRC_LAST_DIR = '../outcomes_summaries/magiczne_karty/i_RANDOM_2019-04-04-001720_summary/'
 DST_DIR = '../plots/'
 
 def plot_num_wins():

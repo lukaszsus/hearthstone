@@ -8,7 +8,7 @@ import numpy as np
 from mcts.mctsnode import MCTSNode, NodeType
 
 MCTS_MAX_TIME = 1000
-MCTS_MAX_TIMES = [500, 100]
+MCTS_MAX_TIMES = [1000]
 (_ROOT, _DEPTH, _BREADTH) = range(3)
 
 

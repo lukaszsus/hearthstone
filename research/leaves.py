@@ -69,7 +69,11 @@ if __name__ == '__main__':
             game_id, move_id = get_game_move_id(file_name)
             file_path = os.path.join(path, file_name)
             with open(file_path, 'rb') as f:
-                tree = dill.load(f)
+                try:
+                    tree = dill.load(f)
+                except:
+                    print(f)
+                    print(file_path)
                 depths = np.asarray(count_depths(tree))
                 mean = depths.mean()
                 median = np.median(depths)

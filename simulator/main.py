@@ -38,14 +38,13 @@ def make_research():
 
     num_games = 100
 
-    strategies_to_test = [Strategies.AGGRESSIVE, Strategies.CONTROLLING, Strategies.RANDOM]
+    # strategies_to_test = [Strategies.AGGRESSIVE, Strategies.CONTROLLING, Strategies.RANDOM]
+    strategies_to_test = [Strategies.RANDOM]
     strategy_2 = Strategies.MCTS
 
     # robię tutaj coś bardzo brzydkiego i traktuję bibliotekę jak obiekt, a jej stałą jak pole obiektu, ale działa
     for mctstree.MCTS_MAX_TIME in mctstree.MCTS_MAX_TIMES:
         for strategy_1 in strategies_to_test:
-            if strategy_1 == Strategies.AGGRESSIVE and mctstree.MCTS_MAX_TIME == 500:
-                continue
             session_start = datetime.datetime.now()
             elapsed = []
             player2_wins = 0

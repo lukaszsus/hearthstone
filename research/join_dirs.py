@@ -4,8 +4,8 @@ from research.leaves import get_game_move_id
 from research.saver import parse_to_file_name
 
 if __name__ == '__main__':
-    src_dir = '../outcomes_to_process/2019-04-02-073358'
-    dst_dir = '../outcomes_to_process/2019-04-02-044945'
+    src_dir = '../outcomes_to_process/2019-04-04-171236'
+    dst_dir = '../outcomes_to_process/2019-04-04-123018'
 
     next_game_id = None
     files = os.listdir(dst_dir)

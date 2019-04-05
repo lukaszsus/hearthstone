@@ -9,6 +9,7 @@ SRC_DIR = '../outcomes_summaries/magiczne_karty/'
 SRC_LAST_DIR = '../outcomes_summaries/magiczne_karty/i_RANDOM_2019-04-04-001720_summary/'
 DST_DIR = '../plots/'
 
+
 def plot_num_wins():
     src_file_path = os.path.join(SRC_LAST_DIR, "outcomes.csv")
     data = pd.read_csv(src_file_path)
